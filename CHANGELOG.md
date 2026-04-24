@@ -1,8 +1,6 @@
 # Changelog
 
-## [Unreleased] / ToDo
 
-- Screenshots für ODAS App-Store
 
 ## 05.03.2026 (Version 1.0.0)
 
