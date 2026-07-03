@@ -214,6 +214,55 @@
       },
       "default": "<ul><li><a href=\"https://www.bundesnetzagentur.de/DE/Fachthemen/ElektrizitaetundGas/E-Mobilitaet/Ladesaeulenkarte_node.html\" target=\"_blank\">Bundesnetzagentur – Ladesäulenregister</a></li><li><a href=\"https://opendata.rhein-kreis-neuss.de/explore/dataset/rhein-kreis-neuss-ladesaulen-in-deutschland/\" target=\"_blank\">Open Data Portal Rhein-Kreis-Neuss</a></li></ul>",
       "erforderlich": "nein"
+    },
+    "datenquelleHinweis": {
+      "label": "Methodik / Datenquelle-Hinweis",
+      "hilfe": "Herkunft, Erhebungsmethode und Limitierungen (HTML/Markdown). Leer = ausgeblendet.",
+      "format": {
+        "typ": "markdown"
+      },
+      "default": "<p>Die Ladesäulendaten stammen aus dem Ladesäulenregister der Bundesnetzagentur. Die App unterstützt zwei API-Typen: OpenDataSoft v2.1 und CKAN datastore_search_sql. Die Suche unterstützt Postleitzahlen- und Ortsuche mit SQL-WHERE-Generierung. Bei fehlerhaften Koordinaten erfolgt ein Photon-Geocoding-Fallback. Die Entfernungsberechnung und das dynamische Radius-Clustering nutzen die Haversine-Formel. Koordinaten außerhalb Deutschlands werden automatisch normalisiert.</p>",
+      "erforderlich": "nein"
+    },
+    "datenStand": {
+      "label": "Datenstand",
+      "hilfe": "Freitext-Hinweis zum Stand der Daten. Leer = ausgeblendet.",
+      "format": {
+        "typ": "string",
+        "laenge": 60
+      },
+      "default": "",
+      "erforderlich": "nein"
+    },
+    "kpiKontext1": {
+      "label": "KPI-Erklärung 1: Ladesäulen",
+      "hilfe": "Erklärtext unter dem KPI-Wert. Leer = ausgeblendet.",
+      "format": {
+        "typ": "string",
+        "laenge": 250
+      },
+      "default": "",
+      "erforderlich": "nein"
+    },
+    "kpiKontext2": {
+      "label": "KPI-Erklärung 2: Ladepunkte gesamt",
+      "hilfe": "Erklärtext unter dem KPI-Wert. Leer = ausgeblendet.",
+      "format": {
+        "typ": "string",
+        "laenge": 250
+      },
+      "default": "",
+      "erforderlich": "nein"
+    },
+    "kpiKontext3": {
+      "label": "KPI-Erklärung 3: Max. Leistung (kW)",
+      "hilfe": "Erklärtext unter dem KPI-Wert. Leer = ausgeblendet.",
+      "format": {
+        "typ": "string",
+        "laenge": 250
+      },
+      "default": "",
+      "erforderlich": "nein"
     }
   },
   "daten": {
