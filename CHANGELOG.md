@@ -1,6 +1,11 @@
 # Changelog
 
+## 03.07.2026 (Version 1.1.0)
 
+- ENH: Schale 4 – escapeHtml() für XSS-Schutz
+- ENH: Schale 4 – renderWeitereInfos() für konfigurierbare weiterführende Links
+- ENH: Schale 4 – Datenfrische-Indikator via ODS Catalog (metas.modified)
+- ENH: Schale 4 – config: weiterfuehrendeLinks mit Bundesnetzagentur-Ladesäulenregister + ODS-Datensatz
 
 ## 05.03.2026 (Version 1.0.0)
 

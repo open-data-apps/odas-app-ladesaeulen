@@ -1,0 +1,26 @@
+.ls-weitere-infos {
+  border: 1px solid var(--bs-border-color);
+  border-radius: 0.5rem;
+  background: var(--bs-body-bg);
+  padding: 1rem;
+}
+
+.ls-weitere-infos-content :last-child {
+  margin-bottom: 0;
+}
+
+.ls-weitere-infos-content a {
+  overflow-wrap: anywhere;
+}
+
+.ls-methodik { border: 1px solid var(--bs-border-color); border-radius: 0.5rem; background: var(--bs-body-bg); overflow: hidden; }
+.ls-methodik-toggle { width: 100%; border: 0; background: transparent; color: inherit; display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1rem; text-align: left; }
+.ls-methodik-toggle:hover, .ls-methodik-toggle:focus-visible { background: rgba(var(--bs-primary-rgb), 0.05); outline: none; }
+.ls-methodik-chevron { transition: transform 0.18s ease; }
+.ls-methodik-toggle[aria-expanded="true"] .ls-methodik-chevron { transform: rotate(180deg); }
+.ls-methodik-content { border-top: 1px solid var(--bs-border-color); padding: 1rem; }
+.ls-methodik-content p:last-child { margin-bottom: 0; }
+.ls-kpi-info-toggle { border: 0; background: transparent; color: var(--bs-secondary-color); width: 1.75rem; height: 1.75rem; display: inline-flex; align-items: center; justify-content: center; border-radius: 999px; padding: 0; }
+.ls-kpi-info-toggle:hover, .ls-kpi-info-toggle:focus-visible, .ls-kpi-info-toggle:not(.collapsed) { color: var(--bs-primary); background: rgba(var(--bs-primary-rgb), 0.08); outline: none; }
+.ls-kpi-info-icon { font-size: 1rem; line-height: 1; }
+.ls-kpi-kontext { margin-top: 0.5rem; color: var(--bs-secondary-color); font-size: 0.875rem; line-height: 1.4; }

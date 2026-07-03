@@ -2,6 +2,8 @@
 
 Interaktive Karte und Tabelle aller E-Ladesäulen in Deutschland für den [Open Data App Store](https://open-data-app-store.de/). Entspricht der [Open Data App-Spezifikation](https://open-data-apps.github.io/open-data-app-docs/open-data-app-spezifikation/). Mehr unter https://github.com/open-data-apps
 
+Version 1.1.0 — mit Schale 4 Verständlichkeits-Komponenten (Datenfrische-Indikator, weiterführende Links).
+
 ---
 
 ## Screenshots
@@ -27,6 +29,14 @@ Single Page Application mit Logo, Menü, Impressum/Datenschutz/Kontakt-Seiten un
 - **Kennzahlen**: Anzahl Ladesäulen, Gesamtzahl Ladepunkte, maximale Leistung
 - **Sortierbare Tabelle**: Klick auf Tabellenzeile zentriert die Karte auf die Station
 - **Koordinaten-Korrektur**: Geografische Ausreißer werden per Photon-Geocoding nachgeodet
+- **Datenfrische-Indikator**: Zeigt das letzte Aktualisierungsdatum des Datensatzes an
+- **Weiterführende Links**: Konfigurierbare Verweise zu verwandten Quellen (z. B. Bundesnetzagentur-Ladesäulenregister)
+
+---
+
+## Für wen ist diese App?
+
+Diese App zeigt öffentliche Ladesäulen in Deutschland. Sie richtet sich an E-Auto-Fahrende, die unterwegs eine passende Ladestation suchen — filterbar nach Steckertyp und Umkreis. Es sind keine Datenfachkenntnisse erforderlich.
 
 ---
 

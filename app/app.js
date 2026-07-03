@@ -22,6 +22,7 @@ function app(configdata = {}, enclosingHtmlDivElement) {
   enclosingHtmlDivElement.innerHTML = `
     <div class="card mb-3 border-0 shadow-sm">
       <div class="card-body py-3">
+        <div class="text-end mb-1"><small id="ls-datenstand" class="text-muted"></small></div>
         <div class="row g-2 align-items-start">
           <div class="col-12 col-md-7">
             <label class="form-label fw-semibold mb-1">🔍 Stadt oder PLZ</label>
@@ -68,7 +69,7 @@ function app(configdata = {}, enclosingHtmlDivElement) {
     </div>
   `;
 
-  loadLeaflet().then(() => initMap(enclosingHtmlDivElement, BASE_URL));
+  loadLeaflet().then(() => initMap(enclosingHtmlDivElement, BASE_URL, configdata));
   return null;
 }
 
@@ -129,7 +130,7 @@ function loadLeaflet() {
 }
 
 /* ── Karte und Logik initialisieren ── */
-function initMap(el, BASE_URL) {
+function initMap(el, BASE_URL, configdata) {
   const map = L.map("ladestation-map").setView([51.165, 10.451], 6);
 
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -628,7 +629,7 @@ function initMap(el, BASE_URL) {
           <div class="card text-center border-0 bg-success bg-opacity-10">
             <div class="card-body py-2">
               <div class="fs-4 fw-bold text-success">${stationen.length}</div>
-              <div class="small text-muted">Ladesäulen</div>
+              <div class="small text-muted">Ladesäulen</div>\n              ${kpiContext(configdata.kpiKontext1, "1")}
             </div>
           </div>
         </div>
@@ -636,7 +637,7 @@ function initMap(el, BASE_URL) {
           <div class="card text-center border-0 bg-primary bg-opacity-10">
             <div class="card-body py-2">
               <div class="fs-4 fw-bold text-primary">${gesamtPunkte}</div>
-              <div class="small text-muted">Ladepunkte gesamt</div>
+              <div class="small text-muted">Ladepunkte gesamt</div>\n              ${kpiContext(configdata.kpiKontext2, "2")}
             </div>
           </div>
         </div>
@@ -644,7 +645,7 @@ function initMap(el, BASE_URL) {
           <div class="card text-center border-0 bg-warning bg-opacity-10">
             <div class="card-body py-2">
               <div class="fs-4 fw-bold text-warning">${maxKw > 0 ? maxKw + " kW" : "–"}</div>
-              <div class="small text-muted">Max. Leistung</div>
+              <div class="small text-muted">Max. Leistung</div>\n              ${kpiContext(configdata.kpiKontext3, "3")}
             </div>
           </div>
         </div>
@@ -666,7 +667,8 @@ function initMap(el, BASE_URL) {
           </thead>
           <tbody id="ladestation-tbody"></tbody>
         </table>
-      </div>`;
+      </div>
+      ${renderWeitereInfos(configdata)}${renderMethodikbox(configdata)}`;
 
     const tbody = listEl.querySelector("#ladestation-tbody");
     renderTbody();
@@ -756,6 +758,18 @@ function initMap(el, BASE_URL) {
     const where = conditions.length > 0 ? conditions.join(" AND ") : null;
 
     async function fetchAllPagesOds() {
+      var datasetId = BASE_URL.split("/catalog/datasets/")[1]?.split("/")[0] || "";
+      if (datasetId) {
+        var catUrl = BASE_URL.substring(0, BASE_URL.indexOf("/catalog/datasets/")) + "/catalog/datasets/" + datasetId;
+        fetch(catUrl).then(function(r) { return r.json(); }).then(function(meta) {
+          var stand = extractDatenStand(meta);
+          if (stand) {
+            var badge = document.getElementById("ls-datenstand");
+            if (badge) badge.textContent = "Aktualisiert: " + stand;
+          }
+        }).catch(function() {});
+      }
+
       const PAGE_SIZE = 100;
       let offset = 0;
       let total = null;
@@ -1097,3 +1111,74 @@ function initMap(el, BASE_URL) {
  * addToHead – nicht benötigt, Leaflet wird dynamisch in loadLeaflet() geladen.
  */
 function addToHead() {}
+
+function escapeHtml(s) {
+  return String(s == null ? "" : s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+
+  /* ── Schale 4: KPI Kontext ── */
+  function kpiContext(kontext, id) {
+    var text = String(kontext || "").trim();
+    if (!text) return "";
+    var targetId = "ls-kpi-kontext-" + id;
+    return (
+      '<button class="ls-kpi-info-toggle collapsed" type="button" ' +
+      'data-bs-toggle="collapse" data-bs-target="#' + targetId + '" ' +
+      'aria-expanded="false" aria-controls="' + targetId + '" ' +
+      'aria-label="Erklärung zu diesem Wert">' +
+      '<span class="ls-kpi-info-icon" aria-hidden="true">ⓘ</span>' +
+      "</button>" +
+      '<div id="' + targetId + '" class="collapse">' +
+      '<div class="ls-kpi-kontext">' + escapeHtml(text) + "</div>" +
+      "</div>"
+    );
+  }
+
+  /* ── Schale 4: Methodikbox ── */
+  function renderMethodikbox(cfg) {
+    var hinweis = ((cfg && cfg.datenquelleHinweis) || "").trim();
+    var stand = ((cfg && cfg.datenStand) || "").trim();
+    if (!hinweis && !stand) return "";
+    var standHtml = stand
+      ? '<p class="text-muted small mb-2">' + escapeHtml(stand) + "</p>"
+      : "";
+    return (
+      '<section class="ls-methodik mt-3">' +
+      '<button class="ls-methodik-toggle collapsed" type="button" ' +
+      'data-bs-toggle="collapse" data-bs-target="#ls-methodik-body" ' +
+      'aria-expanded="false" aria-controls="ls-methodik-body">' +
+      '<h2 class="h5 mb-0">Methodik &amp; Datenquelle</h2>' +
+      '<span class="ls-methodik-chevron" aria-hidden="true">&#9662;</span>' +
+      "</button>" +
+      '<div id="ls-methodik-body" class="collapse">' +
+      '<div class="ls-methodik-content">' +
+      standHtml +
+      hinweis +
+      "</div></div></section>"
+    );
+  }
+
+function renderWeitereInfos(cfg) {
+  var links = ((cfg && cfg.weiterfuehrendeLinks) || "").trim();
+  if (!links) return "";
+  return (
+    '<section class="ls-weitere-infos mt-3">' +
+    '<h2 class="h5 mb-2">Weitere Informationen</h2>' +
+    '<div class="ls-weitere-infos-content">' +
+    links +
+    "</div></section>"
+  );
+}
+
+function extractDatenStand(responseData) {
+  var modified = responseData?.metas?.modified || null;
+  if (!modified) return null;
+  var d = new Date(modified);
+  return isNaN(d.getTime()) ? null : d.toLocaleDateString("de-DE");
+}

@@ -3,7 +3,7 @@
   "app-entwickler-name": "ondics-gmbh",
   "name-in-url": "ladesaeulen",
   "name": "Ladesäulen",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "odas-app-icon": "assets/odas-app-icon.svg",
   "app-icon": "assets/odas-app-icon.svg",
   "kurzbeschreibung": "Interaktive Karte und Tabelle aller öffentlichen E-Ladesäulen in Deutschland (Bundesnetzagentur-Daten).",
@@ -104,6 +104,10 @@
         "Die E-Ladesäulen-App zeigt alle öffentlichen Ladesäulen in Deutschland auf einer interaktiven Karte.",
         "Datenquelle: Bundesnetzagentur via Open Data Rhein-Kreis-Neuss (CC BY 4.0).",
         "Suche nach Stadt oder PLZ, Filter nach Steckertyp, Vollbild-Karte und sortierbare Detailtabelle.",
+        "",
+        "## Für wen ist diese App?",
+        "Diese App zeigt öffentliche Ladesäulen in Deutschland. Sie richtet sich an E-Auto-Fahrende, die unterwegs eine passende Ladestation suchen — filterbar nach Steckertyp und Umkreis. Sie benötigen keine Datenfachkenntnisse — einfach Stadt oder PLZ eingeben und die passenden Ladestationen erkunden.",
+        "",
         "## App-Anbieter",
         "Die App wird bereit gestellt von <a href=\"{{odp.anbieter.url}}\">{{odp.anbieter.name}}</a>",
         "## Datenquelle",
@@ -201,6 +205,15 @@
         "default": "de"
       },
       "erforderlich": "ja"
+    },
+    "weiterfuehrendeLinks": {
+      "label": "Weiterführende Links",
+      "hilfe": "Verwandte Datensätze / Hintergrundquellen (HTML/Markdown). Leer = ausgeblendet.",
+      "format": {
+        "typ": "markdown"
+      },
+      "default": "<ul><li><a href=\"https://www.bundesnetzagentur.de/DE/Fachthemen/ElektrizitaetundGas/E-Mobilitaet/Ladesaeulenkarte_node.html\" target=\"_blank\">Bundesnetzagentur – Ladesäulenregister</a></li><li><a href=\"https://opendata.rhein-kreis-neuss.de/explore/dataset/rhein-kreis-neuss-ladesaulen-in-deutschland/\" target=\"_blank\">Open Data Portal Rhein-Kreis-Neuss</a></li></ul>",
+      "erforderlich": "nein"
     }
   },
   "daten": {

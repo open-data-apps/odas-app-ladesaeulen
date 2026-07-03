@@ -32,5 +32,37 @@
     "Provided by: Ondics GmbH"
   ],
   "apiurl": "https://opendata.rhein-kreis-neuss.de/api/explore/v2.1/catalog/datasets/rhein-kreis-neuss-ladesaulen-in-deutschland/records",
-  "sprache": "de"
+  "weiterfuehrendeLinks": "<ul><li><a href=\"https://www.bundesnetzagentur.de/DE/Fachthemen/ElektrizitaetundGas/E-Mobilitaet/Ladesaeulenkarte_node.html\" target=\"_blank\">Bundesnetzagentur – Ladesäulenregister</a></li><li><a href=\"https://opendata.rhein-kreis-neuss.de/explore/dataset/rhein-kreis-neuss-ladesaulen-in-deutschland/\" target=\"_blank\">Open Data Portal Rhein-Kreis-Neuss</a></li></ul>",
+  "sprache": "de",
+  "datenquelleHinweis": "Dual-API-Erkennung (OpenDataSoft v2 + CKAN Datastore Search), SQL-WHERE-Generierung für serverseitige Ort/PLZ-Filterung, Photon-Geocoding-Fallback bei Ausreißer-Koordinaten, Koordinaten-Normalisierung (Deutschland-Bounding-Box, lat/lon-Vertauschungs-Korrektur).",
+  "kpiKontext1": {
+    "label": "KPI Kontext 1",
+    "hilfe": "Erklärungstext für KPI-Kachel 1",
+    "format": {
+      "typ": "string",
+      "laenge": 250
+    },
+    "default": "",
+    "erforderlich": "nein"
+  },
+  "kpiKontext2": {
+    "label": "KPI Kontext 2",
+    "hilfe": "Erklärungstext für KPI-Kachel 2",
+    "format": {
+      "typ": "string",
+      "laenge": 250
+    },
+    "default": "",
+    "erforderlich": "nein"
+  },
+  "kpiKontext3": {
+    "label": "KPI Kontext 3",
+    "hilfe": "Erklärungstext für KPI-Kachel 3",
+    "format": {
+      "typ": "string",
+      "laenge": 250
+    },
+    "default": "",
+    "erforderlich": "nein"
+  }
 }
