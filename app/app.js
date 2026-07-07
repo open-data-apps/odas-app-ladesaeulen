@@ -16,8 +16,31 @@
  * @param enclosingHtmlDivElement
  * @returns NULL
  */
+/* ── Sanity-Check: erkennt ungültige oder aus Beispieltext übernommene apiurl-Werte ── */
+function isValidApiUrl(url) {
+  const value = String(url || "").trim();
+  if (!value) return false;
+  if (/<[^>]+>/.test(value)) return false; // Platzhalter-Tokens wie <portal>/<resource-id>
+  if (/\boder\b/i.test(value)) return false; // zusammengesetzter Beispieltext ("... oder ...")
+  try {
+    const parsed = new URL(value);
+    return parsed.protocol === "http:" || parsed.protocol === "https:";
+  } catch (e) {
+    return false;
+  }
+}
+
 function app(configdata = {}, enclosingHtmlDivElement) {
   const BASE_URL = configdata.apiurl;
+
+  if (!isValidApiUrl(BASE_URL)) {
+    enclosingHtmlDivElement.innerHTML = `
+      <div class="alert alert-danger">
+        <strong>Fehler in der App-Konfiguration:</strong> Die hinterlegte API-URL ist ungültig oder enthält Platzhalter-/Beispieltext.
+        Bitte in der App-Konfiguration unter „URL zu den Ladesäulen-Daten" genau einen konkreten API-Endpunkt hinterlegen.
+      </div>`;
+    return null;
+  }
 
   enclosingHtmlDivElement.innerHTML = `
     <div class="card mb-3 border-0 shadow-sm">

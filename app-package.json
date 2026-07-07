@@ -9,11 +9,19 @@
   "kurzbeschreibung": "Interaktive Karte und Tabelle aller öffentlichen E-Ladesäulen in Deutschland (Bundesnetzagentur-Daten).",
   "beschreibung": [
     "_multiline_",
-    "Die App visualisiert alle öffentlichen E-Ladesäulen in Deutschland auf einer interaktiven Karte. ",
-    "Datengrundlage ist der Datensatz der Bundesnetzagentur, bereitgestellt via Open Data Rhein-Kreis-Neuss ",
-    "(rhein-kreis-neuss-ladesaulen-in-deutschland, ~61.793 Einträge, CC BY 4.0). ",
-    "Suche nach Stadt oder Postleitzahl, Filter nach Steckertyp, Vollbild-Karte und sortierbare Tabelle.",
-    ""
+    "<p>Die Ladesäulen-App zeigt öffentliche Ladepunkte auf einer interaktiven Karte und in einer Detailtabelle.</p>",
+    "<p>Sie macht Standort, Betreiber, Steckertypen und weitere Merkmale leichter auffindbar.</p>",
+    "<h3>Inhalte</h3>",
+    "<p>Die App bietet Karte, Suche, Filter und sortierbare Tabellenansichten. Nutzer:innen können Ladepunkte räumlich erkunden und nach relevanten Eigenschaften eingrenzen.</p>",
+    "<h3>Nutzung</h3>",
+    "<p>Suchen Sie nach Ort oder Postleitzahl, filtern Sie nach Steckertyp oder anderen Merkmalen und öffnen Sie Detailinformationen direkt aus Karte oder Tabelle.</p>",
+    "<h3>Für wen ist diese App?</h3>",
+    "<p>Die App richtet sich an Bürger:innen, Mobilitätsplanung, Verwaltung und Interessierte, die Ladeinfrastruktur besser überblicken möchten. Besondere Datenkenntnisse sind für die Nutzung nicht erforderlich.</p>",
+    "<h3>Datenquelle</h3>",
+    "<p>Die Daten stammen aus dem Ladesäulenregister der Bundesnetzagentur und werden über eine konfigurierte Open-Data-Quelle bereitgestellt.</p>",
+    "<ul><li><strong>Open Data Portal:</strong> <a href=\"https://opendata.rhein-kreis-neuss.de/\" target=\"_blank\" rel=\"noopener\">Open Data Rhein-Kreis Neuss</a></li><li><strong>Datensatz:</strong> <a href=\"https://opendata.rhein-kreis-neuss.de/explore/dataset/rhein-kreis-neuss-ladesaulen-in-deutschland/\" target=\"_blank\" rel=\"noopener\">Ladesäulen in Deutschland</a></li><li><strong>Ressource/API-Endpunkt:</strong> <a href=\"https://opendata.rhein-kreis-neuss.de/api/explore/v2.1/catalog/datasets/rhein-kreis-neuss-ladesaulen-in-deutschland/records\" target=\"_blank\" rel=\"noopener\">OpenDataSoft Records API</a></li></ul>",
+    "<h3>Open Data App Store</h3>",
+    "<p>Diese App ist für den Open Data App Store vorbereitet und kann mit eigenen Ladeinfrastruktur-Daten oder kompatiblen offenen Quellen betrieben werden.</p>"
   ],
   "tags-funktion": [
     "Karte",
@@ -101,22 +109,19 @@
       },
       "default": [
         "_multiline_",
-        "Die E-Ladesäulen-App zeigt alle öffentlichen Ladesäulen in Deutschland auf einer interaktiven Karte.",
-        "Datenquelle: Bundesnetzagentur via Open Data Rhein-Kreis-Neuss (CC BY 4.0).",
-        "Suche nach Stadt oder PLZ, Filter nach Steckertyp, Vollbild-Karte und sortierbare Detailtabelle.",
-        "",
-        "## Für wen ist diese App?",
-        "Diese App zeigt öffentliche Ladesäulen in Deutschland. Sie richtet sich an E-Auto-Fahrende, die unterwegs eine passende Ladestation suchen — filterbar nach Steckertyp und Umkreis. Sie benötigen keine Datenfachkenntnisse — einfach Stadt oder PLZ eingeben und die passenden Ladestationen erkunden.",
-        "",
-        "## App-Anbieter",
-        "Die App wird bereit gestellt von <a href=\"{{odp.anbieter.url}}\">{{odp.anbieter.name}}</a>",
-        "## Datenquelle",
-        "Die Daten kommen aus dem Open Data Portal <a href=\"{{odp.url}}\">{{odp.name}}</a>.",
-        "Die Datenquelle ist <a href=\"{{appinstanz.apiurl}}\">{{appinstanz.apiurl}}</a>.",
-        "## Über diese App",
-        "Die App wurde entwickelt von <a href=\"{{app.developer.url}}\">{{app.developer.name}}</a>. App-Version: {{app.version}}.",
-        "## Open Data App Store",
-        "Der Open Data App Store betrieben von <a href=\"{{odas.betreiber.url}}\">{{odas.betreiber.name}}</a>"
+        "<p>Die Ladesäulen-App zeigt öffentliche Ladepunkte auf einer interaktiven Karte und in einer Detailtabelle.</p>",
+        "<p>Sie macht Standort, Betreiber, Steckertypen und weitere Merkmale leichter auffindbar.</p>",
+        "<h3>Inhalte</h3>",
+        "<p>Die App bietet Karte, Suche, Filter und sortierbare Tabellenansichten. Nutzer:innen können Ladepunkte räumlich erkunden und nach relevanten Eigenschaften eingrenzen.</p>",
+        "<h3>Nutzung</h3>",
+        "<p>Suchen Sie nach Ort oder Postleitzahl, filtern Sie nach Steckertyp oder anderen Merkmalen und öffnen Sie Detailinformationen direkt aus Karte oder Tabelle.</p>",
+        "<h3>Für wen ist diese App?</h3>",
+        "<p>Die App richtet sich an Bürger:innen, Mobilitätsplanung, Verwaltung und Interessierte, die Ladeinfrastruktur besser überblicken möchten. Besondere Datenkenntnisse sind für die Nutzung nicht erforderlich.</p>",
+        "<h3>Datenquelle</h3>",
+        "<p>Die Daten stammen aus dem Ladesäulenregister der Bundesnetzagentur und werden über eine konfigurierte Open-Data-Quelle bereitgestellt.</p>",
+        "<ul><li><strong>Open Data Portal:</strong> <a href=\"https://opendata.rhein-kreis-neuss.de/\" target=\"_blank\" rel=\"noopener\">Open Data Rhein-Kreis Neuss</a></li><li><strong>Datensatz:</strong> <a href=\"https://opendata.rhein-kreis-neuss.de/explore/dataset/rhein-kreis-neuss-ladesaulen-in-deutschland/\" target=\"_blank\" rel=\"noopener\">Ladesäulen in Deutschland</a></li><li><strong>Ressource/API-Endpunkt:</strong> <a href=\"https://opendata.rhein-kreis-neuss.de/api/explore/v2.1/catalog/datasets/rhein-kreis-neuss-ladesaulen-in-deutschland/records\" target=\"_blank\" rel=\"noopener\">OpenDataSoft Records API</a></li></ul>",
+        "<h3>Open Data App Store</h3>",
+        "<p>Diese App ist für den Open Data App Store vorbereitet und kann mit eigenen Ladeinfrastruktur-Daten oder kompatiblen offenen Quellen betrieben werden.</p>"
       ],
       "erforderlich": "ja"
     },
@@ -185,13 +190,13 @@
     },
     "apiurl": {
       "label": "URL zu den Ladesäulen-Daten",
-      "hilfe": "API-Endpunkt des Ladesäulen-Datensatzes (OpenDataSoft records oder CKAN datastore_search/datastore_search_sql)",
+      "hilfe": "API-Endpunkt des Ladesäulen-Datensatzes. Unterstützt werden entweder eine OpenDataSoft-records-URL oder eine CKAN-datastore_search-URL – hier bitte genau einen konkreten Endpunkt eintragen, kein Beispiel mit mehreren Formaten.",
       "format": {
         "typ": "url",
         "laenge": 255
       },
       "default": "https://opendata.rhein-kreis-neuss.de/api/explore/v2.1/catalog/datasets/rhein-kreis-neuss-ladesaulen-in-deutschland/records",
-      "beispiel": "https://opendata.rhein-kreis-neuss.de/api/explore/v2.1/catalog/datasets/rhein-kreis-neuss-ladesaulen-in-deutschland/records oder https://<portal>/api/3/action/datastore_search?resource_id=<resource-id>",
+      "beispiel": "https://opendata.rhein-kreis-neuss.de/api/explore/v2.1/catalog/datasets/rhein-kreis-neuss-ladesaulen-in-deutschland/records",
       "erforderlich": "ja"
     },
     "sprache": {
@@ -221,7 +226,7 @@
       "format": {
         "typ": "markdown"
       },
-      "default": "<p>Die Ladesäulendaten stammen aus dem Ladesäulenregister der Bundesnetzagentur. Die App unterstützt zwei API-Typen: OpenDataSoft v2.1 und CKAN datastore_search_sql. Die Suche unterstützt Postleitzahlen- und Ortsuche mit SQL-WHERE-Generierung. Bei fehlerhaften Koordinaten erfolgt ein Photon-Geocoding-Fallback. Die Entfernungsberechnung und das dynamische Radius-Clustering nutzen die Haversine-Formel. Koordinaten außerhalb Deutschlands werden automatisch normalisiert.</p>",
+      "default": "<p>Die Ladesäulendaten stammen aus dem Ladesäulenregister der Bundesnetzagentur und werden über eine konfigurierte Open-Data-Quelle abgerufen. Die App normalisiert Standort-, Betreiber- und Steckertypinformationen für Karte, Suche und Tabelle; Aktualität und Vollständigkeit hängen von der angebundenen Quelle ab.</p>",
       "erforderlich": "nein"
     },
     "datenStand": {
@@ -231,7 +236,7 @@
         "typ": "string",
         "laenge": 60
       },
-      "default": "",
+      "default": "Stand: Live-Abruf aus der konfigurierten Ladesäulen-Quelle",
       "erforderlich": "nein"
     },
     "kpiKontext1": {
@@ -241,7 +246,7 @@
         "typ": "string",
         "laenge": 250
       },
-      "default": "",
+      "default": "Anzahl der Ladesäulen-Standorte im sichtbaren Bereich. Jeder Standort kann mehrere einzelne Ladepunkte umfassen.",
       "erforderlich": "nein"
     },
     "kpiKontext2": {
@@ -251,7 +256,7 @@
         "typ": "string",
         "laenge": 250
       },
-      "default": "",
+      "default": "Gesamtzahl aller einzelnen Ladepunkte. Jeder Ladepunkt kann jeweils ein Elektrofahrzeug gleichzeitig laden.",
       "erforderlich": "nein"
     },
     "kpiKontext3": {
@@ -261,7 +266,7 @@
         "typ": "string",
         "laenge": 250
       },
-      "default": "",
+      "default": "Höchste verfügbare Ladeleistung in Kilowatt (kW). Je höher die Leistung, desto schneller kann ein E-Auto an diesem Standort laden.",
       "erforderlich": "nein"
     }
   },
