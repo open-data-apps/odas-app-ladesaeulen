@@ -1,5 +1,6 @@
 {
   "apiVersion": "1",
+  "proxyAktiv": "nein",
   "titel": "Ladesäulen Deutschland",
   "seitentitel": "Ladesäulen",
   "icon": "logo_ondics.png",

@@ -30,6 +30,84 @@ function isValidApiUrl(url) {
   }
 }
 
+function isOdasProxyEnabled(configdata = {}) {
+  return String(configdata.proxyAktiv || "").trim().toLowerCase() === "ja";
+}
+
+function extractPathFromUrl(url) {
+  try {
+    const parsedUrl = new URL(url);
+    return parsedUrl.pathname + parsedUrl.search;
+  } catch (_error) {
+    return String(url || "");
+  }
+}
+
+function getOdasAppBasePath(pathname) {
+  let appPath =
+    pathname === undefined
+      ? typeof window !== "undefined"
+        ? window.location.pathname
+        : "/"
+      : String(pathname || "/");
+
+  if (!appPath.endsWith("/")) {
+    const lastSlashIndex = appPath.lastIndexOf("/");
+    const lastSegment = appPath.substring(lastSlashIndex + 1);
+    if (lastSegment.includes(".")) {
+      appPath = appPath.substring(0, lastSlashIndex + 1);
+    }
+  }
+
+  return appPath.replace(/\/+$/, "");
+}
+
+function getOdasProxyEndpoint(targetUrl, pathname) {
+  const appPath = getOdasAppBasePath(pathname);
+  return `${appPath}/odp-data?path=${encodeURIComponent(
+    extractPathFromUrl(targetUrl),
+  )}`;
+}
+
+async function fetchViaOdasProxy(targetUrl) {
+  const response = await fetch(getOdasProxyEndpoint(targetUrl), {
+    method: "POST",
+  });
+
+  if (!response.ok) {
+    throw new Error(`ODAS-Proxy-Fehler: HTTP ${response.status}`);
+  }
+
+  const proxyData = await response.json();
+  if (!proxyData || typeof proxyData.content !== "string") {
+    throw new Error("ODAS-Proxy-Antwort enthält keinen content-String.");
+  }
+
+  return proxyData.content;
+}
+
+async function fetchOdasResource(targetUrl, configdata = {}) {
+  if (isOdasProxyEnabled(configdata)) {
+    return fetchViaOdasProxy(targetUrl);
+  }
+
+  try {
+    const response = await fetch(targetUrl);
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+    return response.text();
+  } catch (error) {
+    throw new Error(
+      `Direkter Datenabruf fehlgeschlagen (${error.message}). Bitte prüfen Sie die Daten-URL und die CORS-Freigabe der Datenquelle.`,
+    );
+  }
+}
+
+async function fetchOdasJson(targetUrl, configdata = {}) {
+  return JSON.parse(await fetchOdasResource(targetUrl, configdata));
+}
+
 function app(configdata = {}, enclosingHtmlDivElement) {
   const BASE_URL = configdata.apiurl;
 
@@ -784,7 +862,7 @@ function initMap(el, BASE_URL, configdata) {
       var datasetId = BASE_URL.split("/catalog/datasets/")[1]?.split("/")[0] || "";
       if (datasetId) {
         var catUrl = BASE_URL.substring(0, BASE_URL.indexOf("/catalog/datasets/")) + "/catalog/datasets/" + datasetId;
-        fetch(catUrl).then(function(r) { return r.json(); }).then(function(meta) {
+        fetchOdasJson(catUrl, configdata).then(function(meta) {
           var stand = extractDatenStand(meta);
           if (stand) {
             var badge = document.getElementById("ls-datenstand");
@@ -805,9 +883,7 @@ function initMap(el, BASE_URL, configdata) {
           where,
         });
 
-        const res = await fetch(reqUrl);
-        if (!res.ok) throw new Error("API-Fehler: " + res.status);
-        const data = await res.json();
+        const data = await fetchOdasJson(reqUrl, configdata);
 
         if (total === null) total = data.total_count || 0;
         const page = data.results || [];
@@ -857,9 +933,7 @@ function initMap(el, BASE_URL, configdata) {
           }
         }
 
-        const res = await fetch(reqUrl);
-        if (!res.ok) throw new Error("API-Fehler: " + res.status);
-        const data = await res.json();
+        const data = await fetchOdasJson(reqUrl, configdata);
         if (data && data.success === false) {
           throw new Error(data.error?.message || "CKAN API-Fehler");
         }
