@@ -357,7 +357,7 @@ function initMap(el, BASE_URL, configdata) {
       s.steckertypen6,
     ]
       .filter(Boolean)
-      .map((t) => `<span class="badge bg-secondary me-1">${t}</span>`)
+      .map((t) => `<span class="badge bg-secondary me-1">${escapeHtml(t)}</span>`)
       .join("");
   }
 
@@ -565,8 +565,8 @@ function initMap(el, BASE_URL, configdata) {
       marker.bindPopup(
         `
         <div style="min-width:220px">
-          <div class="fw-bold mb-1">${s.betreiber || "Unbekannter Betreiber"}</div>
-          <div class="text-muted small mb-2">${adresse}<br>${ort}</div>
+          <div class="fw-bold mb-1">${escapeHtml(s.betreiber) || "Unbekannter Betreiber"}</div>
+          <div class="text-muted small mb-2">${escapeHtml(adresse)}<br>${escapeHtml(ort)}</div>
           <table class="table table-sm table-borderless mb-1" style="font-size:.85rem">
             <tr><td class="text-muted pe-2">Typ</td>
                 <td>${
@@ -575,15 +575,15 @@ function initMap(el, BASE_URL, configdata) {
                     : '<span class="badge bg-success">Normallader ⚡</span>'
                 }</td></tr>
             <tr><td class="text-muted pe-2">Ladepunkte</td>
-                <td><strong>${s.anzahl_ladepunkte ?? "–"}</strong></td></tr>
+                <td><strong>${escapeHtml(s.anzahl_ladepunkte ?? "–")}</strong></td></tr>
             <tr><td class="text-muted pe-2">Leistung</td>
-                <td>${getKw(s)}</td></tr>
+                <td>${escapeHtml(getKw(s))}</td></tr>
             <tr><td class="text-muted pe-2">Stecker</td>
                 <td>${getStecker(s) || "–"}</td></tr>
             <tr><td class="text-muted pe-2">In Betrieb</td>
-                <td>${inbetrieb}</td></tr>
+                <td>${escapeHtml(inbetrieb)}</td></tr>
           </table>
-          ${s.anzeigename_karte ? `<div class="text-muted small mb-2">${s.anzeigename_karte}</div>` : ""}
+          ${s.anzeigename_karte ? `<div class="text-muted small mb-2">${escapeHtml(s.anzeigename_karte)}</div>` : ""}
           <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent([[s.strasse, s.hausnummer].filter(Boolean).join(" "), s.postleitzahl, s.ort, "Deutschland"].filter(Boolean).join(", "))}"
              target="_blank" rel="noopener noreferrer"
              class="btn btn-sm btn-outline-primary w-100 mt-1"
@@ -659,7 +659,7 @@ function initMap(el, BASE_URL, configdata) {
       return Object.entries(cols)
         .map(
           ([key, col]) =>
-            `<th data-col="${key}" class="user-select-none" style="cursor:pointer;white-space:nowrap;">${col.label}${sortIcon(key)}</th>`,
+            `<th data-col="${escapeHtml(key)}" class="user-select-none" style="cursor:pointer;white-space:nowrap;">${escapeHtml(col.label)}${sortIcon(key)}</th>`,
         )
         .join("");
     }
@@ -691,19 +691,19 @@ function initMap(el, BASE_URL, configdata) {
                     data-lon="${c?.lon || ""}"
                     data-idx="${i}">
                   <td class="fw-semibold" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"
-                      title="${s.betreiber || ""}">${s.betreiber || "–"}</td>
+                      title="${escapeHtml(s.betreiber ?? "")}">${escapeHtml(s.betreiber) || "–"}</td>
                   <td>
-                    <div style="font-size:.85rem">${adresse}</div>
-                    <div class="text-muted" style="font-size:.75rem">${ort}</div>
+                    <div style="font-size:.85rem">${escapeHtml(adresse)}</div>
+                    <div class="text-muted" style="font-size:.75rem">${escapeHtml(ort)}</div>
                   </td>
                   <td style="white-space:nowrap">${
                     schnell
                       ? '<span class="badge bg-danger">Schnell ⚡⚡</span>'
                       : '<span class="badge bg-success">Normal ⚡</span>'
                   }</td>
-                  <td class="text-center">${s.anzahl_ladepunkte ?? "–"}</td>
-                  <td style="white-space:nowrap">${s.nennleistung_ladeeinrichtung_kw ? s.nennleistung_ladeeinrichtung_kw + " kW" : "–"}</td>
-                  <td style="font-size:.78rem">${getSteckerText(s) || "–"}</td>
+                  <td class="text-center">${escapeHtml(s.anzahl_ladepunkte ?? "–")}</td>
+                  <td style="white-space:nowrap">${s.nennleistung_ladeeinrichtung_kw ? escapeHtml(s.nennleistung_ladeeinrichtung_kw) + " kW" : "–"}</td>
+                  <td style="font-size:.78rem">${escapeHtml(getSteckerText(s)) || "–"}</td>
                 </tr>`;
         })
         .join("");
