@@ -181,7 +181,7 @@ function loadLeaflet() {
       const link = document.createElement("link");
       link.id = "leaflet-css";
       link.rel = "stylesheet";
-      link.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
+      link.href = "vendor/leaflet/leaflet.css";
       document.head.appendChild(link);
     }
     if (!document.getElementById("leaflet-cluster-css")) {
@@ -215,7 +215,7 @@ function loadLeaflet() {
       typeof L !== "undefined"
         ? Promise.resolve()
         : loadScript(
-            "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js",
+            "vendor/leaflet/leaflet.js",
             "leaflet-js",
           );
     leafletReady
