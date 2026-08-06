@@ -189,13 +189,13 @@ function loadLeaflet() {
       link.id = "leaflet-cluster-css";
       link.rel = "stylesheet";
       link.href =
-        "https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css";
+        "vendor/markercluster/MarkerCluster.css";
       document.head.appendChild(link);
       const link2 = document.createElement("link");
       link2.id = "leaflet-cluster-default-css";
       link2.rel = "stylesheet";
       link2.href =
-        "https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css";
+        "vendor/markercluster/MarkerCluster.Default.css";
       document.head.appendChild(link2);
     }
     function loadScript(src, id) {
@@ -221,7 +221,7 @@ function loadLeaflet() {
     leafletReady
       .then(() =>
         loadScript(
-          "https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js",
+          "vendor/markercluster/leaflet.markercluster.js",
           "leaflet-cluster-js",
         ),
       )
