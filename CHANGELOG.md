@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.14.0 - 2026-08-06
+- FIX: DOM-Zugriffe auf den App-Container gescopt; Karten-ID mit App-Praefix versehen (F-25)
+
 ## 1.13.0 - 2026-08-06
 - FIX: Datenschutzangabe beschreibt den tatsaechlichen Stand nach dem Vendoring (Welle G)
 

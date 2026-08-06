@@ -152,7 +152,7 @@ function app(configdata = {}, enclosingHtmlDivElement) {
       </div>
     </div>
 
-    <div id="ladestation-map" style="height: 500px; border-radius: 10px; overflow: hidden; z-index:0; position:relative;">
+    <div id="ls-ladestation-map" style="height: 500px; border-radius: 10px; overflow: hidden; z-index:0; position:relative;">
       <button id="fullscreen-btn" title="Vollbild"
         style="position:absolute;top:10px;right:10px;z-index:1000;
                background:#fff;border:2px solid rgba(0,0,0,.3);border-radius:6px;
@@ -231,8 +231,8 @@ function loadLeaflet() {
 }
 
 /* ── Karte und Logik initialisieren ── */
-function initMap(el, BASE_URL, configdata) {
-  const map = L.map("ladestation-map").setView([51.165, 10.451], 6);
+function initMap(root, BASE_URL, configdata) {
+  const map = L.map("ls-ladestation-map").setView([51.165, 10.451], 6);
 
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     attribution:
@@ -611,7 +611,7 @@ function initMap(el, BASE_URL, configdata) {
 
   /* ── Tabelle rendern ── */
   function renderListe(stationen) {
-    const listEl = el.querySelector("#ladestation-list");
+    const listEl = root.querySelector("#ladestation-list");
     if (stationen.length === 0) {
       listEl.innerHTML = `<div class="alert alert-warning">Keine Ladestationen gefunden.</div>`;
       return;
@@ -717,8 +717,8 @@ function initMap(el, BASE_URL, configdata) {
           if (!lat || !lon) return;
           map.setView([lat, lon], 17);
           markers[idx]?.marker.openPopup();
-          document
-            .getElementById("ladestation-map")
+          root
+            .querySelector("#ls-ladestation-map")
             .scrollIntoView({ behavior: "smooth", block: "center" });
         });
       });
@@ -795,7 +795,7 @@ function initMap(el, BASE_URL, configdata) {
 
   /* ── Treffer-Badge aktualisieren ── */
   function updateBadge(gefunden) {
-    const badge = el.querySelector("#treffer-badge");
+    const badge = root.querySelector("#treffer-badge");
     if (!badge) return;
     if (gefunden === null) {
       badge.innerHTML = "";
@@ -831,7 +831,7 @@ function initMap(el, BASE_URL, configdata) {
   function fetchStationen(suchWert, displayWert) {
     // displayWert = was im Input steht (Ortsname); suchWert = was an die API geht (PLZ oder Ort)
     const ortDisplay = displayWert ?? suchWert;
-    const listEl = el.querySelector("#ladestation-list");
+    const listEl = root.querySelector("#ladestation-list");
     listEl.innerHTML = `
       <div class="text-center py-5 text-muted">
         <div class="spinner-border text-success mb-3" role="status"></div>
@@ -865,7 +865,7 @@ function initMap(el, BASE_URL, configdata) {
         fetchOdasJson(catUrl, configdata).then(function(meta) {
           var stand = extractDatenStand(meta);
           if (stand) {
-            var badge = document.getElementById("ls-datenstand");
+            var badge = root.querySelector("#ls-datenstand");
             if (badge) badge.textContent = "Aktualisiert: " + stand;
           }
         }).catch(function() {});
@@ -969,7 +969,7 @@ function initMap(el, BASE_URL, configdata) {
         alleStationenRaw = await fixOutliers(valid);
         geladenerOrt = ortDisplay;
         geladenerSuchWert = suchWert;
-        applySteckerFilter(el.querySelector("#filter-stecker").value);
+        applySteckerFilter(root.querySelector("#filter-stecker").value);
       })
       .catch((err) => {
         listEl.innerHTML = `
@@ -981,9 +981,9 @@ function initMap(el, BASE_URL, configdata) {
   }
 
   /* ── Event-Handler ── */
-  const sucheBtn = el.querySelector("#suche-btn");
-  const ortInput = el.querySelector("#ort-input");
-  const filterStecker = el.querySelector("#filter-stecker");
+  const sucheBtn = root.querySelector("#suche-btn");
+  const ortInput = root.querySelector("#ort-input");
+  const filterStecker = root.querySelector("#filter-stecker");
 
   function triggerSuche() {
     const ort = ortInput.value.trim();
@@ -997,8 +997,8 @@ function initMap(el, BASE_URL, configdata) {
   }
 
   /* ── Vollbild-Toggle ── */
-  const mapEl = el.querySelector("#ladestation-map");
-  const fsBtn = el.querySelector("#fullscreen-btn");
+  const mapEl = root.querySelector("#ls-ladestation-map");
+  const fsBtn = root.querySelector("#fullscreen-btn");
   let isFullscreen = false;
 
   // Styles für Vollbild-Modus
