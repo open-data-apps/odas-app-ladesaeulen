@@ -16,6 +16,8 @@
  * @param enclosingHtmlDivElement
  * @returns NULL
  */
+let lsInstanzZaehler = 0;
+
 /* ── Sanity-Check: erkennt ungültige oder aus Beispieltext übernommene apiurl-Werte ── */
 function isValidApiUrl(url) {
   const value = String(url || "").trim();
@@ -109,6 +111,7 @@ async function fetchOdasJson(targetUrl, configdata = {}) {
 }
 
 function app(configdata = {}, enclosingHtmlDivElement) {
+  const lsUid = "i" + ++lsInstanzZaehler;
   const BASE_URL = configdata.apiurl;
 
   if (!isValidApiUrl(BASE_URL)) {
@@ -170,7 +173,7 @@ function app(configdata = {}, enclosingHtmlDivElement) {
     </div>
   `;
 
-  loadLeaflet().then(() => initMap(enclosingHtmlDivElement, BASE_URL, configdata));
+  loadLeaflet().then(() => initMap(enclosingHtmlDivElement, BASE_URL, configdata, lsUid));
   return null;
 }
 
@@ -231,8 +234,8 @@ function loadLeaflet() {
 }
 
 /* ── Karte und Logik initialisieren ── */
-function initMap(root, BASE_URL, configdata) {
-  const map = L.map("ls-ladestation-map").setView([51.165, 10.451], 6);
+function initMap(root, BASE_URL, configdata, uid) {
+  const map = L.map(root.querySelector("#ls-ladestation-map")).setView([51.165, 10.451], 6);
 
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     attribution:
@@ -730,7 +733,7 @@ function initMap(root, BASE_URL, configdata) {
           <div class="card text-center border-0 bg-success bg-opacity-10">
             <div class="card-body py-2">
               <div class="fs-4 fw-bold text-success">${stationen.length}</div>
-              <div class="small text-muted">Ladesäulen</div>\n              ${kpiContext(configdata.kpiKontext1, "1")}
+              <div class="small text-muted">Ladesäulen</div>\n              ${kpiContext(configdata.kpiKontext1, "1", uid)}
             </div>
           </div>
         </div>
@@ -738,7 +741,7 @@ function initMap(root, BASE_URL, configdata) {
           <div class="card text-center border-0 bg-primary bg-opacity-10">
             <div class="card-body py-2">
               <div class="fs-4 fw-bold text-primary">${gesamtPunkte}</div>
-              <div class="small text-muted">Ladepunkte gesamt</div>\n              ${kpiContext(configdata.kpiKontext2, "2")}
+              <div class="small text-muted">Ladepunkte gesamt</div>\n              ${kpiContext(configdata.kpiKontext2, "2", uid)}
             </div>
           </div>
         </div>
@@ -746,7 +749,7 @@ function initMap(root, BASE_URL, configdata) {
           <div class="card text-center border-0 bg-warning bg-opacity-10">
             <div class="card-body py-2">
               <div class="fs-4 fw-bold text-warning">${maxKw > 0 ? maxKw + " kW" : "–"}</div>
-              <div class="small text-muted">Max. Leistung</div>\n              ${kpiContext(configdata.kpiKontext3, "3")}
+              <div class="small text-muted">Max. Leistung</div>\n              ${kpiContext(configdata.kpiKontext3, "3", uid)}
             </div>
           </div>
         </div>
@@ -769,7 +772,7 @@ function initMap(root, BASE_URL, configdata) {
           <tbody id="ladestation-tbody"></tbody>
         </table>
       </div>
-      ${renderWeitereInfos(configdata)}${renderMethodikbox(configdata)}`;
+      ${renderWeitereInfos(configdata)}${renderMethodikbox(configdata, uid)}`;
 
     const tbody = listEl.querySelector("#ladestation-tbody");
     renderTbody();
@@ -1220,10 +1223,10 @@ function escapeHtml(s) {
 
 
   /* ── Schale 4: KPI Kontext ── */
-  function kpiContext(kontext, id) {
+  function kpiContext(kontext, id, uid) {
     var text = String(kontext || "").trim();
     if (!text) return "";
-    var targetId = "ls-kpi-kontext-" + id;
+    var targetId = "ls-kpi-kontext-" + id + "-" + uid;
     return (
       '<button class="ls-kpi-info-toggle collapsed" type="button" ' +
       'data-bs-toggle="collapse" data-bs-target="#' + targetId + '" ' +
@@ -1238,7 +1241,7 @@ function escapeHtml(s) {
   }
 
   /* ── Schale 4: Methodikbox ── */
-  function renderMethodikbox(cfg) {
+  function renderMethodikbox(cfg, uid) {
     var hinweis = ((cfg && cfg.datenquelleHinweis) || "").trim();
     var stand = ((cfg && cfg.datenStand) || "").trim();
     if (!hinweis && !stand) return "";
@@ -1248,12 +1251,12 @@ function escapeHtml(s) {
     return (
       '<section class="ls-methodik mt-3">' +
       '<button class="ls-methodik-toggle collapsed" type="button" ' +
-      'data-bs-toggle="collapse" data-bs-target="#ls-methodik-body" ' +
-      'aria-expanded="false" aria-controls="ls-methodik-body">' +
+      'data-bs-toggle="collapse" data-bs-target="#ls-methodik-body-' + uid + '" ' +
+      'aria-expanded="false" aria-controls="ls-methodik-body-' + uid + '">' +
       '<h2 class="h5 mb-0">Methodik &amp; Datenquelle</h2>' +
       '<span class="ls-methodik-chevron" aria-hidden="true">&#9662;</span>' +
       "</button>" +
-      '<div id="ls-methodik-body" class="collapse">' +
+      '<div id="ls-methodik-body-' + uid + '" class="collapse">' +
       '<div class="ls-methodik-content">' +
       standHtml +
       hinweis +
