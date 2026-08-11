@@ -124,6 +124,7 @@ Beim Aufruf dieser App werden folgende externe Server kontaktiert:
 
 - `tile.openstreetmap.org` — Kartenkacheln (OpenStreetMap)
 - `google.com/maps` — externer Routen-/Kartenlink (öffnet erst bei Klick in einem neuen Tab)
+- `photon.komoot.io` — Orts- und Adresssuche (Photon); übertragen: Stationsadressen bzw. eingegebene Suchbegriffe, IP-Adresse, User-Agent; Abruf erst bei Nutzerinteraktion bzw. Korrekturabgleich
 
 Diese Anbieter bleiben auch im Standalone-Betrieb extern; ein vollständig autarker Betrieb ohne Internetzugang ist derzeit nicht möglich. Alle Programmbibliotheken werden lokal aus `app/vendor/` ausgeliefert und nicht mehr extern geladen.
 

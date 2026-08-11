@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.16.0 - 2026-08-11
+- FIX: XSS- und URL-Vertrag geschlossen; Photon offengelegt (F-35, F-36)
+
 ## 1.15.0 - 2026-08-07
 - FIX: Bootstrap-Ziele instanzeindeutig machen (F-32)
 

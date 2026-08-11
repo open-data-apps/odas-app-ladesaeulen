@@ -977,7 +977,7 @@ function initMap(root, BASE_URL, configdata, uid) {
       .catch((err) => {
         listEl.innerHTML = `
           <div class="alert alert-danger">
-            <strong>Fehler beim Laden der Daten:</strong> ${err.message}
+            <strong>Fehler beim Laden der Daten:</strong> ${escapeHtml(err.message)}
           </div>`;
         updateBadge(0);
       });
@@ -1087,10 +1087,10 @@ function initMap(root, BASE_URL, configdata, uid) {
         const parts = [plz, p.county || p.state, p.country].filter(Boolean);
         const detail = parts.join(" \u00b7 ");
         return `<li class="list-group-item list-group-item-action py-2 px-3"
-                  data-value="${name.replace(/"/g, "&quot;")}"
-                  data-plz="${plz}"
+                  data-value="${escapeHtml(name)}"
+                  data-plz="${escapeHtml(plz)}"
                   style="cursor:pointer;font-size:.9rem;">
-                <span class="fw-semibold">${name}</span>${detail ? `<small class="text-muted ms-2">${detail}</small>` : ""}
+                <span class="fw-semibold">${escapeHtml(name)}</span>${detail ? `<small class="text-muted ms-2">${escapeHtml(detail)}</small>` : ""}
               </li>`;
       })
       .join("");
@@ -1219,6 +1219,11 @@ function escapeHtml(s) {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
+}
+
+function safeHttpUrl(value) {
+  const s = String(value || "").trim();
+  return /^https?:\/\//i.test(s) ? s : "";
 }
 
 
