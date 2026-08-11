@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.19.0 - 2026-08-11
+- FIX: Veraltete Antworten verwerfen (F-44): `fetchStationen` startet jeden Abruf mit monotonem Token (`state.fetchToken`) und prüft nach jeder await-Grenze vor jeder Zuweisung (`alleStationenRaw`, `geladenerOrt`, `geladenerSuchWert`, `applySteckerFilter`, Karte/Liste, Ladeanzeige); das `fixOutliers`-Ergebnis wird nur bei aktuellem Token angewendet; Autocomplete erhält pro Input-Event einen eigenen Token (`state.acToken`) und verwirft veraltete Photon-Antworten; `onPageLeave` invalidiert beide Token
+
 ## 1.18.0 - 2026-08-11
 - FIX: Laufzeitressourcen beim Seitenwechsel freigeben (F-43): neuer `onPageLeave`-Hook setzt `disposed`, entfernt die dokument-/window-weiten Listener aus `state.listeners`, löscht das Suggestions-Element aus dem DOM, cleart den Autocomplete-Debounce (`acDebounce` liegt jetzt im State) und entfernt die Leaflet-Karte (`state.map`)
 

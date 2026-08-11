@@ -27,6 +27,8 @@ const ladesaeulenInstances = new Map();
 function onPageLeave(page) {
   ladesaeulenInstances.forEach((state, container) => {
     state.disposed = true;
+    state.fetchToken += 1; // F-44: laufende Abrufe invalidieren
+    state.acToken += 1; // F-44: laufende Autocomplete-Timer invalidieren
     (state.listeners || []).forEach(([el, type, fn, capture]) => {
       el.removeEventListener(type, fn, capture);
     });
@@ -155,6 +157,8 @@ function app(configdata = {}, enclosingHtmlDivElement) {
     root: enclosingHtmlDivElement,
     config: configdata || {},
     listeners: [],
+    fetchToken: 0, // F-44: monotoner Token für fetchStationen-Abrufe
+    acToken: 0, // F-44: monotoner Token je Autocomplete-Eingabe
   };
   state.disposed = false; // wird in Task 9 (onPageLeave) gesetzt
   ladesaeulenInstances.set(enclosingHtmlDivElement, state);
@@ -879,6 +883,9 @@ function initMap(root, BASE_URL, configdata, uid, state) {
 
   /* ── API-Abfrage – alle Seiten laden wenn > 100 Treffer ── */
   function fetchStationen(suchWert, displayWert) {
+    // F-44: Jeder Abruf bekommt einen monotonen Token; nur die Antwort des
+    // aktuellsten Abrufs darf State, Karte, Liste und Ladeanzeige ändern.
+    const token = ++state.fetchToken;
     // displayWert = was im Input steht (Ortsname); suchWert = was an die API geht (PLZ oder Ort)
     const ortDisplay = displayWert ?? suchWert;
     const listEl = root.querySelector("#ladestation-list");
@@ -913,6 +920,8 @@ function initMap(root, BASE_URL, configdata, uid, state) {
       if (datasetId) {
         var catUrl = BASE_URL.substring(0, BASE_URL.indexOf("/catalog/datasets/")) + "/catalog/datasets/" + datasetId;
         fetchOdasJson(catUrl, configdata).then(function(meta) {
+          // F-44: nur der aktuelle Abruf darf den Datenstand schreiben
+          if (token !== state.fetchToken) return;
           var stand = extractDatenStand(meta);
           if (stand) {
             var badge = root.querySelector("#ls-datenstand");
@@ -934,6 +943,8 @@ function initMap(root, BASE_URL, configdata, uid, state) {
         });
 
         const data = await fetchOdasJson(reqUrl, configdata);
+        // F-44: Abruf überholt? Dann keine Fortschrittsanzeige mehr und abbrechen.
+        if (token !== state.fetchToken) return null;
 
         if (total === null) total = data.total_count || 0;
         const page = data.results || [];
@@ -984,6 +995,8 @@ function initMap(root, BASE_URL, configdata, uid, state) {
         }
 
         const data = await fetchOdasJson(reqUrl, configdata);
+        // F-44: Abruf überholt? Dann keine Fortschrittsanzeige mehr und abbrechen.
+        if (token !== state.fetchToken) return null;
         if (data && data.success === false) {
           throw new Error(data.error?.message || "CKAN API-Fehler");
         }
@@ -1010,19 +1023,26 @@ function initMap(root, BASE_URL, configdata, uid, state) {
 
     fetchAllPages()
       .then(async (results) => {
+        // F-44: Antwort eines überholten Abrufs vollständig verwerfen
+        if (token !== state.fetchToken) return;
         const valid = results.filter((s) => !!getCoord(s));
 
         // Ladetext während Geocoding aktualisieren
         const p = listEl.querySelector("p");
         if (p && valid.length > 0) p.textContent = "Prüfe Koordinaten…";
 
-        alleStationenRaw = await fixOutliers(valid);
+        const fixed = await fixOutliers(valid);
+        // F-44: fixOutliers-Ergebnis nur bei aktuellem Token anwenden
+        if (token !== state.fetchToken) return;
+        alleStationenRaw = fixed;
         if (state.disposed) return;
         geladenerOrt = ortDisplay;
         geladenerSuchWert = suchWert;
         applySteckerFilter(root.querySelector("#filter-stecker").value);
       })
       .catch((err) => {
+        // F-44: Fehler eines überholten Abrufs nicht mehr anzeigen
+        if (token !== state.fetchToken) return;
         listEl.innerHTML = `
           <div class="alert alert-danger">
             <strong>Fehler beim Laden der Daten:</strong> ${escapeHtml(err.message)}
@@ -1201,6 +1221,9 @@ function initMap(root, BASE_URL, configdata, uid, state) {
   ortInput.addEventListener("input", () => {
     ortInput.classList.remove("is-invalid");
     clearTimeout(state.acDebounce);
+    // F-44: eigener Token je Input-Event – nur die aktuellste Autocomplete-
+    // Antwort darf die Suggestions zeigen.
+    const acToken = ++state.acToken;
     const q = ortInput.value.trim();
     if (q.length < 2) {
       hideSuggestions();
@@ -1213,6 +1236,11 @@ function initMap(root, BASE_URL, configdata, uid, state) {
         if (!res.ok) return;
         const data = await res.json();
         if (state.disposed) return;
+        if (acToken !== state.acToken) {
+          // F-44: veraltetes Ergebnis – keine Suggestions mehr zeigen
+          hideSuggestions();
+          return;
+        }
         const features = (data.features || []).filter((f) => {
           const p = f.properties;
           // Nur Orte/Städte/PLZ anzeigen, keine Straßen oder POIs
