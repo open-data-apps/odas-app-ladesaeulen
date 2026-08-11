@@ -114,6 +114,18 @@ function app(configdata = {}, enclosingHtmlDivElement) {
   const lsUid = "i" + ++lsInstanzZaehler;
   const BASE_URL = configdata.apiurl;
 
+  // F-42: pro Instanz geschlossener Runtime-State. `listeners` sammelt die
+  // dokument-/window-weiten Listener-Referenzen (keydown/resize/scroll) als
+  // [el, type, fn, capture]-Tupel — Task 9.2 (F-43) entfernt sie im
+  // onPageLeave-Teardown über `state.listeners`.
+  const state = {
+    uid: lsUid,
+    root: enclosingHtmlDivElement,
+    config: configdata || {},
+    listeners: [],
+  };
+  state.disposed = false; // wird in Task 9 (onPageLeave) gesetzt
+
   if (!isValidApiUrl(BASE_URL)) {
     enclosingHtmlDivElement.innerHTML = `
       <div class="alert alert-danger">
@@ -173,7 +185,7 @@ function app(configdata = {}, enclosingHtmlDivElement) {
     </div>
   `;
 
-  loadLeaflet().then(() => initMap(enclosingHtmlDivElement, BASE_URL, configdata, lsUid));
+  loadLeaflet().then(() => initMap(enclosingHtmlDivElement, BASE_URL, configdata, lsUid, state));
   return null;
 }
 
@@ -234,7 +246,7 @@ function loadLeaflet() {
 }
 
 /* ── Karte und Logik initialisieren ── */
-function initMap(root, BASE_URL, configdata, uid) {
+function initMap(root, BASE_URL, configdata, uid, state) {
   const map = L.map(root.querySelector("#ls-ladestation-map")).setView([51.165, 10.451], 6);
 
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -1032,17 +1044,23 @@ function initMap(root, BASE_URL, configdata, uid) {
     setTimeout(() => map.invalidateSize(), 50);
   });
 
-  // Vollbild auch mit Escape beenden
-  document.addEventListener("keydown", (e) => {
+  // Vollbild auch mit Escape beenden — Listener-Referenz im Instanz-State
+  // ablegen, damit Task 9.2 (F-43) sie im onPageLeave-Teardown entfernt.
+  const escapeListener = (e) => {
     if (e.key === "Escape" && isFullscreen) fsBtn.click();
-  });
+  };
+  document.addEventListener("keydown", escapeListener);
+  state.listeners.push([document, "keydown", escapeListener, false]);
 
   sucheBtn.addEventListener("click", triggerSuche);
 
   /* ── Autocomplete ── */
-  // Suggestions-Liste direkt am body hängen, damit kein Eltern-Element sie wegclippt
+  // Suggestions-Liste in den App-Root hängen (nicht document.body), damit sie
+  // zur Instanz gehört und ihre ID instanzeindeutig ist; die Positionierung ist
+  // viewport-basiert (position:fixed + getBoundingClientRect), kein Ancestor
+  // bildet einen neuen Containing-Block (kein transform/filter/will-change).
   const suggestionsEl = document.createElement("ul");
-  suggestionsEl.id = "ort-suggestions";
+  suggestionsEl.id = "ort-suggestions-" + uid;
   suggestionsEl.className = "list-group shadow";
   suggestionsEl.style.cssText = [
     "display:none",
@@ -1055,7 +1073,7 @@ function initMap(root, BASE_URL, configdata, uid) {
     "margin:0",
     "padding:0",
   ].join(";");
-  document.body.appendChild(suggestionsEl);
+  root.appendChild(suggestionsEl);
 
   function positionSuggestions() {
     const rect = ortInput.getBoundingClientRect();
@@ -1181,17 +1199,18 @@ function initMap(root, BASE_URL, configdata, uid) {
     }, 280);
   });
 
-  // Neupositionieren bei Größenveränderung / Scrollen
-  window.addEventListener("resize", () => {
+  // Neupositionieren bei Größenveränderung / Scrollen — Listener-Referenzen
+  // im Instanz-State ablegen (Task 9.2 / F-43 entfernt sie im Teardown).
+  const resizeListener = () => {
     if (suggestionsEl.style.display !== "none") positionSuggestions();
-  });
-  window.addEventListener(
-    "scroll",
-    () => {
-      if (suggestionsEl.style.display !== "none") positionSuggestions();
-    },
-    true,
-  );
+  };
+  const scrollListener = () => {
+    if (suggestionsEl.style.display !== "none") positionSuggestions();
+  };
+  window.addEventListener("resize", resizeListener);
+  window.addEventListener("scroll", scrollListener, true);
+  state.listeners.push([window, "resize", resizeListener, false]);
+  state.listeners.push([window, "scroll", scrollListener, true]);
 
   ortInput.addEventListener("blur", () => setTimeout(hideSuggestions, 180));
 

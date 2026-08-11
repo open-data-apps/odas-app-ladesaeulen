@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.17.0 - 2026-08-11
+- FIX: Laufzeitzustand pro App-Instanz isoliert (F-42): neuer pro-Instanz-State `state = { uid, root, config, listeners }` (zusammengeführt aus `lsUid`, `root`, `configdata`); Suggestions-`<ul>` wird in den App-Root gehängt statt an `document.body`, ID instanzeindeutig `ort-suggestions-<uid>` (Positionierung bleibt viewport-basiert); die dokument-/window-weiten Listener (keydown-Escape, resize, scroll) liegen als `[el, type, fn, capture]`-Referenzen in `state.listeners` — Task 9.2 (F-43) entfernt sie im onPageLeave-Teardown
+
 ## 1.16.0 - 2026-08-11
 - FIX: XSS- und URL-Vertrag geschlossen; Photon offengelegt (F-35, F-36)
 
