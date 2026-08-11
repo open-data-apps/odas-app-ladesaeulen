@@ -18,6 +18,38 @@
  */
 let lsInstanzZaehler = 0;
 
+// F-43: Registrierte Instanzen (Container -> State), damit der Top-Level-Hook
+// onPageLeave() alle gemounteten Instanzen aufraeumen kann. Die Base ruft den
+// Hook global ohne Container-Parameter auf; eine iterierbare Map ist daher das
+// zur App passende Muster (Portfolio-Muster aus Task 9.1).
+const ladesaeulenInstances = new Map();
+
+function onPageLeave(page) {
+  ladesaeulenInstances.forEach((state, container) => {
+    state.disposed = true;
+    (state.listeners || []).forEach(([el, type, fn, capture]) => {
+      el.removeEventListener(type, fn, capture);
+    });
+    state.listeners = [];
+    if (state.acDebounce) {
+      clearTimeout(state.acDebounce);
+      state.acDebounce = null;
+    }
+    if (state.suggestionsEl && state.suggestionsEl.parentNode) {
+      state.suggestionsEl.parentNode.removeChild(state.suggestionsEl);
+    }
+    if (state.map) {
+      try {
+        state.map.remove();
+      } catch (error) {
+        console.warn("Fehler beim Entfernen der Leaflet-Karte:", error);
+      }
+      state.map = null;
+    }
+    ladesaeulenInstances.delete(container);
+  });
+}
+
 /* ── Sanity-Check: erkennt ungültige oder aus Beispieltext übernommene apiurl-Werte ── */
 function isValidApiUrl(url) {
   const value = String(url || "").trim();
@@ -125,6 +157,7 @@ function app(configdata = {}, enclosingHtmlDivElement) {
     listeners: [],
   };
   state.disposed = false; // wird in Task 9 (onPageLeave) gesetzt
+  ladesaeulenInstances.set(enclosingHtmlDivElement, state);
 
   if (!isValidApiUrl(BASE_URL)) {
     enclosingHtmlDivElement.innerHTML = `
@@ -247,7 +280,9 @@ function loadLeaflet() {
 
 /* ── Karte und Logik initialisieren ── */
 function initMap(root, BASE_URL, configdata, uid, state) {
+  if (state.disposed) return;
   const map = L.map(root.querySelector("#ls-ladestation-map")).setView([51.165, 10.451], 6);
+  state.map = map;
 
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     attribution:
@@ -982,6 +1017,7 @@ function initMap(root, BASE_URL, configdata, uid, state) {
         if (p && valid.length > 0) p.textContent = "Prüfe Koordinaten…";
 
         alleStationenRaw = await fixOutliers(valid);
+        if (state.disposed) return;
         geladenerOrt = ortDisplay;
         geladenerSuchWert = suchWert;
         applySteckerFilter(root.querySelector("#filter-stecker").value);
@@ -1074,6 +1110,7 @@ function initMap(root, BASE_URL, configdata, uid, state) {
     "padding:0",
   ].join(";");
   root.appendChild(suggestionsEl);
+  state.suggestionsEl = suggestionsEl;
 
   function positionSuggestions() {
     const rect = ortInput.getBoundingClientRect();
@@ -1083,7 +1120,7 @@ function initMap(root, BASE_URL, configdata, uid, state) {
   }
 
   let acIndex = -1;
-  let acDebounce = null;
+  state.acDebounce = null;
 
   function hideSuggestions() {
     suggestionsEl.style.display = "none";
@@ -1163,18 +1200,19 @@ function initMap(root, BASE_URL, configdata, uid, state) {
 
   ortInput.addEventListener("input", () => {
     ortInput.classList.remove("is-invalid");
-    clearTimeout(acDebounce);
+    clearTimeout(state.acDebounce);
     const q = ortInput.value.trim();
     if (q.length < 2) {
       hideSuggestions();
       return;
     }
-    acDebounce = setTimeout(async () => {
+    state.acDebounce = setTimeout(async () => {
       try {
         const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&limit=7&lang=de&bbox=5.86,47.27,15.04,55.06`;
         const res = await fetch(url);
         if (!res.ok) return;
         const data = await res.json();
+        if (state.disposed) return;
         const features = (data.features || []).filter((f) => {
           const p = f.properties;
           // Nur Orte/Städte/PLZ anzeigen, keine Straßen oder POIs

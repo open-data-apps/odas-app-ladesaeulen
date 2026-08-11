@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.18.0 - 2026-08-11
+- FIX: Laufzeitressourcen beim Seitenwechsel freigeben (F-43): neuer `onPageLeave`-Hook setzt `disposed`, entfernt die dokument-/window-weiten Listener aus `state.listeners`, löscht das Suggestions-Element aus dem DOM, cleart den Autocomplete-Debounce (`acDebounce` liegt jetzt im State) und entfernt die Leaflet-Karte (`state.map`)
+
 ## 1.17.0 - 2026-08-11
 - FIX: Laufzeitzustand pro App-Instanz isoliert (F-42): neuer pro-Instanz-State `state = { uid, root, config, listeners }` (zusammengeführt aus `lsUid`, `root`, `configdata`); Suggestions-`<ul>` wird in den App-Root gehängt statt an `document.body`, ID instanzeindeutig `ort-suggestions-<uid>` (Positionierung bleibt viewport-basiert); die dokument-/window-weiten Listener (keydown-Escape, resize, scroll) liegen als `[el, type, fn, capture]`-Referenzen in `state.listeners` — Task 9.2 (F-43) entfernt sie im onPageLeave-Teardown
 
