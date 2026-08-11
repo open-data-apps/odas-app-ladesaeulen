@@ -37,6 +37,10 @@ function onPageLeave(page) {
       clearTimeout(state.acDebounce);
       state.acDebounce = null;
     }
+    if (state.resizeTimeout) {
+      clearTimeout(state.resizeTimeout);
+      state.resizeTimeout = null;
+    }
     if (state.suggestionsEl && state.suggestionsEl.parentNode) {
       state.suggestionsEl.parentNode.removeChild(state.suggestionsEl);
     }
@@ -159,6 +163,7 @@ function app(configdata = {}, enclosingHtmlDivElement) {
     listeners: [],
     fetchToken: 0, // F-44: monotoner Token für fetchStationen-Abrufe
     acToken: 0, // F-44: monotoner Token je Autocomplete-Eingabe
+    resizeTimeout: null,
   };
   state.disposed = false; // wird in Task 9 (onPageLeave) gesetzt
   ladesaeulenInstances.set(enclosingHtmlDivElement, state);
@@ -1097,7 +1102,12 @@ function initMap(root, BASE_URL, configdata, uid, state) {
       fsBtn.title = "Vollbild";
     }
     // Leaflet muss über die Größenveränderung informiert werden
-    setTimeout(() => map.invalidateSize(), 50);
+    if (state.resizeTimeout) clearTimeout(state.resizeTimeout);
+    state.resizeTimeout = setTimeout(() => {
+      state.resizeTimeout = null;
+      if (state.disposed || !state.map) return;
+      state.map.invalidateSize();
+    }, 50);
   });
 
   // Vollbild auch mit Escape beenden — Listener-Referenz im Instanz-State

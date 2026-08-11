@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.20.0 - 2026-08-11
+- FIX: Der Vollbild-Resize-Timeout wird pro Instanz gespeichert, beim Seitenwechsel abgeräumt und führt nach dem Teardown keine Leaflet-Operation mehr aus (F-43-Nachtrag)
+
 ## 1.19.0 - 2026-08-11
 - FIX: Veraltete Antworten verwerfen (F-44): `fetchStationen` startet jeden Abruf mit monotonem Token (`state.fetchToken`) und prüft nach jeder await-Grenze vor jeder Zuweisung (`alleStationenRaw`, `geladenerOrt`, `geladenerSuchWert`, `applySteckerFilter`, Karte/Liste, Ladeanzeige); das `fixOutliers`-Ergebnis wird nur bei aktuellem Token angewendet; Autocomplete erhält pro Input-Event einen eigenen Token (`state.acToken`) und verwirft veraltete Photon-Antworten; `onPageLeave` invalidiert beide Token
 
