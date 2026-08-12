@@ -46,6 +46,7 @@
   "instanz-config": {
     "seitentitel": {
       "label": "Seitentitel",
+      "category": "general",
       "hilfe": "Der Seitentitel wird im Browser-Tab der App angezeigt",
       "default": "E-Ladesäulen Karte",
       "format": {
@@ -56,6 +57,7 @@
     },
     "titel": {
       "label": "Titel",
+      "category": "general",
       "hilfe": "Der Titel wird in der Titelzeile der App angezeigt",
       "default": "E-Ladesäulen Karte Deutschland",
       "format": {
@@ -66,6 +68,7 @@
     },
     "icon": {
       "label": "App-Icon",
+      "category": "general",
       "hilfe": "Das Icon wird links oben in der Titelzeile angezeigt",
       "default": "{{{odp.logo}}}",
       "format": {
@@ -77,6 +80,7 @@
     },
     "kontakt": {
       "label": "Kontakt",
+      "category": "contact-legal",
       "hilfe": "Der Text wird im Menüpunkt 'Kontakt' angezeigt",
       "format": {
         "typ": "markdown"
@@ -93,6 +97,7 @@
     },
     "beschreibung": {
       "label": "Beschreibung",
+      "category": "content",
       "hilfe": "Der Text wird im Menüpunkt 'Über diese App' angezeigt",
       "format": {
         "typ": "markdown"
@@ -117,6 +122,7 @@
     },
     "impressum": {
       "label": "Impressum",
+      "category": "contact-legal",
       "hilfe": "Der Text wird im Menüpunkt 'Impressum' angezeigt",
       "format": {
         "typ": "markdown"
@@ -136,6 +142,7 @@
     },
     "datenschutz": {
       "label": "Datenschutz",
+      "category": "contact-legal",
       "hilfe": "Der Text wird im Menüpunkt 'Datenschutz' angezeigt",
       "format": {
         "typ": "markdown"
@@ -151,6 +158,7 @@
     },
     "urlDaten": {
       "label": "URL zum Datensatz im ODP",
+      "category": "datasource",
       "hilfe": "URL zur Katalog-Seite des Ladesäulen-Datensatzes im Open Data Portal",
       "format": {
         "typ": "url"
@@ -161,6 +169,7 @@
     },
     "fusszeile": {
       "label": "Fußzeile",
+      "category": "contact-legal",
       "hilfe": "Wird auf der Website unten in der Fusszeile angezeigt.",
       "format": {
         "typ": "string",
@@ -171,6 +180,7 @@
     },
     "proxyAktiv": {
       "label": "ODAS-Proxy aktivieren",
+      "category": "datasource",
       "hilfe": "Mit ja werden Datenabrufe über den ODAS-Proxy gesendet. Der Proxy ist nur im ODAS-Live-System verfügbar; Entwicklung und Standalone verwenden nein.",
       "default": "nein",
       "format": {
@@ -184,6 +194,7 @@
     },
     "apiurl": {
       "label": "URL zu den Ladesäulen-Daten",
+      "category": "datasource",
       "hilfe": "API-Endpunkt des Ladesäulen-Datensatzes. Unterstützt werden entweder eine OpenDataSoft-records-URL oder eine CKAN-datastore_search-URL – hier bitte genau einen konkreten Endpunkt eintragen, kein Beispiel mit mehreren Formaten.",
       "format": {
         "typ": "url",
@@ -195,6 +206,7 @@
     },
     "sprache": {
       "label": "Sprache der App",
+      "category": "general",
       "hilfe": "Angabe der App-Sprache",
       "default": "de",
       "format": {
@@ -207,6 +219,7 @@
     },
     "weiterfuehrendeLinks": {
       "label": "Weiterführende Links",
+      "category": "content",
       "hilfe": "Verwandte Datensätze / Hintergrundquellen (HTML/Markdown). Leer = ausgeblendet.",
       "format": {
         "typ": "markdown"
@@ -216,6 +229,7 @@
     },
     "datenquelleHinweis": {
       "label": "Methodik / Datenquelle-Hinweis",
+      "category": "content",
       "hilfe": "Herkunft, Erhebungsmethode und Limitierungen (HTML/Markdown). Leer = ausgeblendet.",
       "format": {
         "typ": "markdown"
@@ -225,6 +239,7 @@
     },
     "datenStand": {
       "label": "Datenstand",
+      "category": "content",
       "hilfe": "Freitext-Hinweis zum Stand der Daten. Leer = ausgeblendet.",
       "format": {
         "typ": "string",
@@ -235,6 +250,7 @@
     },
     "kpiKontext1": {
       "label": "KPI-Erklärung 1: Ladesäulen",
+      "category": "metrics",
       "hilfe": "Erklärtext unter dem KPI-Wert. Leer = ausgeblendet.",
       "format": {
         "typ": "string",
@@ -245,6 +261,7 @@
     },
     "kpiKontext2": {
       "label": "KPI-Erklärung 2: Ladepunkte gesamt",
+      "category": "metrics",
       "hilfe": "Erklärtext unter dem KPI-Wert. Leer = ausgeblendet.",
       "format": {
         "typ": "string",
@@ -255,6 +272,7 @@
     },
     "kpiKontext3": {
       "label": "KPI-Erklärung 3: Max. Leistung (kW)",
+      "category": "metrics",
       "hilfe": "Erklärtext unter dem KPI-Wert. Leer = ausgeblendet.",
       "format": {
         "typ": "string",
@@ -265,6 +283,7 @@
     },
     "brandingCSS": {
       "label": "Zusätzliches Branding-CSS",
+      "category": "advanced",
       "hilfe": "Optionaler CSS-Code für die konkrete App-Instanz.",
       "default": "",
       "format": {
@@ -275,6 +294,7 @@
     },
     "brandingCSSFile": {
       "label": "Branding-CSS-Datei",
+      "category": "advanced",
       "hilfe": "Optionale URL zu einer zusätzlichen CSS-Datei für die konkrete App-Instanz.",
       "default": "",
       "format": {
