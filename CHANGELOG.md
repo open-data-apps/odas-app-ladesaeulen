@@ -1,5 +1,9 @@
 # Changelog
 
+
+## 1.21.0 - 2026-08-12
+- FIX: `app/index.html` auf den Template-Stand (F-47): Datei byte-gleich aus `oda-generic` übernommen — gültiges HTML, deutsche ARIA-Labels, Footer im Body; Titel und Fußzeile bleiben Platzhalter und werden zur Laufzeit aus der Instanz-Config überschrieben
+
 ## 1.20.0 - 2026-08-11
 - FIX: Der Vollbild-Resize-Timeout wird pro Instanz gespeichert, beim Seitenwechsel abgeräumt und führt nach dem Teardown keine Leaflet-Operation mehr aus (F-43-Nachtrag)
 
