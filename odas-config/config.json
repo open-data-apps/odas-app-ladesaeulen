@@ -36,7 +36,7 @@
     "<p>Die angezeigten Daten werden vom Browser direkt aus der konfigurierten Datenquelle geladen. Dabei werden technisch bedingt IP-Adresse und Browserkennung an deren Betreiber übermittelt. Maßgeblich ist der Schalter <code>proxyAktiv</code> der Instanz-Konfiguration.</p>",
     "<h3>Beim Aufruf kontaktierte Drittanbieter</h3><p>Folgende externe Server werden kontaktiert. Dabei werden IP-Adresse und User-Agent der Besucher:innen an diese Anbieter übertragen:</p><ul><li><strong>tile.openstreetmap.org</strong> — Kartenkacheln (OpenStreetMap)</li><li><strong>google.com/maps</strong> — externer Routen-/Kartenlink (öffnet erst bei Klick in einem neuen Tab)</li><li><strong>photon.komoot.io</strong> — Orts- und Adresssuche (Photon); übertragen: Stationsadressen bzw. eingegebene Suchbegriffe, IP-Adresse, User-Agent; Abruf erst bei Nutzerinteraktion bzw. Korrekturabgleich</li></ul>"
   ],
-  "urlDaten": "https://open-data-musterstadt.ckan.de/testdaten",
+  "urlDaten": "https://opendata.rhein-kreis-neuss.de/explore/dataset/rhein-kreis-neuss-ladesaulen-in-deutschland/information/",
   "fusszeile": [
     "(C) Copyright 2026 | ",
     "für den Inhalt: Ondics GmbH | ",
