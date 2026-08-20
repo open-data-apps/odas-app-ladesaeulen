@@ -1,6 +1,10 @@
 # Changelog
 
 
+## 1.25.0 - 2026-08-20
+- FIX: Drei-Datenzustände-Kontrakt umgesetzt — unkonfigurierte `apiurl` zeigt `alert-info` statt `alert-danger`; 0 Ladestationen zeigen `alert-info` statt `alert-warning` (F-69)
+- FIX: Der OpenDataSoft-Suchpfad escapte `postleitzahl`/`ort`-Sucheingaben bislang nicht, obwohl derselbe Datei-Code es im parallelen CKAN-Pfad bereits korrekt tat — jetzt konsequent über `escapeSqlString()` (F-77, Rest der bereits als geschlossen dokumentierten Welle AA, war im Arbeitsbaum nie committet)
+
 ## 1.24.0 - 2026-08-20
 - FIX: Ladestationen ohne gültige Koordinaten fielen bisher komplett aus Karte UND Tabelle/KPIs — bleiben jetzt in der Tabelle sichtbar, fehlen nur auf der Karte; Anzahl wird als Hinweis angezeigt (F-73)
 

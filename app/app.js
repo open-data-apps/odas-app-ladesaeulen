@@ -188,9 +188,8 @@ function app(configdata = {}, enclosingHtmlDivElement) {
 
   if (!isValidApiUrl(BASE_URL)) {
     enclosingHtmlDivElement.innerHTML = `
-      <div class="alert alert-danger">
-        <strong>Fehler in der App-Konfiguration:</strong> Die hinterlegte API-URL ist ungültig oder enthält Platzhalter-/Beispieltext.
-        Bitte in der App-Konfiguration unter „URL zu den Ladesäulen-Daten" genau einen konkreten API-Endpunkt hinterlegen.
+      <div class="alert alert-info" role="alert">
+        Es ist keine Datenquelle konfiguriert.
       </div>`;
     return null;
   }
@@ -690,7 +689,7 @@ function initMap(root, BASE_URL, configdata, uid, state) {
   function renderListe(stationen) {
     const listEl = root.querySelector("#ladestation-list");
     if (stationen.length === 0) {
-      listEl.innerHTML = `<div class="alert alert-warning">Keine Ladestationen gefunden.</div>`;
+      listEl.innerHTML = `<div class="alert alert-info" role="alert">Keine Ladestationen gefunden.</div>`;
       return;
     }
 
@@ -941,9 +940,9 @@ function initMap(root, BASE_URL, configdata, uid, state) {
 
     if (suchText) {
       if (istPlz) {
-        conditions.push(`postleitzahl LIKE '${suchText}%'`);
+        conditions.push(`postleitzahl LIKE '${escapeSqlString(suchText)}%'`);
       } else {
-        conditions.push(`ort LIKE '%${suchText}%'`);
+        conditions.push(`ort LIKE '%${escapeSqlString(suchText)}%'`);
       }
     }
 
