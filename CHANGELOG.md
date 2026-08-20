@@ -1,6 +1,9 @@
 # Changelog
 
 
+## 1.24.0 - 2026-08-20
+- FIX: Ladestationen ohne gültige Koordinaten fielen bisher komplett aus Karte UND Tabelle/KPIs — bleiben jetzt in der Tabelle sichtbar, fehlen nur auf der Karte; Anzahl wird als Hinweis angezeigt (F-73)
+
 ## 1.23.0 - 2026-08-17
 - `fetchOdasJson()` wirft jetzt bei nicht-JSON-Antworten (CSV, HTML, leerer Body) eine sprechende Konfigurationsfehlermeldung statt der rohen `JSON.parse`-Parserfehlermeldung (F-66)
 - `urlDaten` zeigte auf einen nicht mehr existierenden Host (`offenedaten.esslingen.de`/`open-data-esslingen.de`, NXDOMAIN) bzw. auf den Platzhalter `.../testdaten` (HTTP 404) — jetzt auf die reale Datensatz-Landingpage der tatsächlich konfigurierten `apiurl`-Quelle verweisend, live per HTTP-Abruf verifiziert (F-67)

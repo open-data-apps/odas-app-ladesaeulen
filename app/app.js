@@ -704,6 +704,9 @@ function initMap(root, BASE_URL, configdata, uid, state) {
         .map((s) => s.nennleistung_ladeeinrichtung_kw || 0)
         .filter((v) => v > 0),
     );
+    // F-73: Ladestationen ohne gültige Koordinaten fallen nur von der Karte
+    // weg, bleiben aber in der Tabelle/den KPIs sichtbar; Anzahl wird gemeldet.
+    const ohneKoordinatenAnzahl = stationen.filter((s) => !getCoord(s)).length;
 
     // Sortier-Zustand
     let sortKey = "leistung";
@@ -828,6 +831,14 @@ function initMap(root, BASE_URL, configdata, uid, state) {
           </div>
         </div>
       </div>
+
+      ${
+        ohneKoordinatenAnzahl > 0
+          ? `<div class="alert alert-info" role="alert">
+              ${ohneKoordinatenAnzahl} von ${stationen.length} Ladestationen konnten mangels gültiger Koordinaten nicht auf der Karte angezeigt werden (weiterhin in der Tabelle sichtbar).
+            </div>`
+          : ""
+      }
 
       <h6 class="mb-2 fw-semibold">Alle Ladesäulen</h6>
       <div class="table-responsive w-100">
@@ -1048,7 +1059,11 @@ function initMap(root, BASE_URL, configdata, uid, state) {
       .then(async (results) => {
         // F-44: Antwort eines überholten Abrufs vollständig verwerfen
         if (token !== state.fetchToken) return;
+        // F-73: Datensätze ohne gültige Koordinaten werden NICHT mehr komplett
+        // verworfen — sie bleiben für Tabelle/KPIs erhalten und fehlen nur auf
+        // der Karte, wo sie sich nicht platzieren lassen.
         const valid = results.filter((s) => !!getCoord(s));
+        const ohneKoordinaten = results.filter((s) => !getCoord(s));
 
         // Ladetext während Geocoding aktualisieren
         const p = listEl.querySelector("p");
@@ -1057,7 +1072,7 @@ function initMap(root, BASE_URL, configdata, uid, state) {
         const fixed = await fixOutliers(valid);
         // F-44: fixOutliers-Ergebnis nur bei aktuellem Token anwenden
         if (token !== state.fetchToken) return;
-        alleStationenRaw = fixed;
+        alleStationenRaw = fixed.concat(ohneKoordinaten);
         if (state.disposed) return;
         geladenerOrt = ortDisplay;
         geladenerSuchWert = suchWert;
