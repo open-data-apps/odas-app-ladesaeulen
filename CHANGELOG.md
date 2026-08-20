@@ -1,5 +1,7 @@
 # Changelog
 
+## 1.26.0 - 2026-08-20
+- Markdown-Metadaten: Paketbeschreibungen auf echtes Markdown umgestellt, exakte Identität Top-Level/Instanz hergestellt, lokale HTML-Fixture semantisch gespiegelt.
 
 ## 1.25.0 - 2026-08-20
 - FIX: Drei-Datenzustände-Kontrakt umgesetzt — unkonfigurierte `apiurl` zeigt `alert-info` statt `alert-danger`; 0 Ladestationen zeigen `alert-info` statt `alert-warning` (F-69)
