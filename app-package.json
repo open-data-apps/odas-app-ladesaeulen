@@ -3,7 +3,7 @@
   "app-entwickler-name": "ondics-gmbh",
   "name-in-url": "ladesaeulen",
   "name": "Ladesäulen",
-  "version": "1.26.0",
+  "version": "1.27.0",
   "odas-app-icon": "assets/odas-app-icon.svg",
   "app-icon": "assets/odas-app-icon.svg",
   "kurzbeschreibung": "Interaktive Karte und Tabelle aller öffentlichen E-Ladesäulen in Deutschland (Bundesnetzagentur-Daten).",
@@ -15,7 +15,7 @@
     "",
     "## Methodik",
     "",
-    "Die App erkennt anhand der konfigurierten `apiurl` automatisch, ob ein OpenDataSoft-Records-API-Endpunkt (ODS v2.1, `…/api/explore/v2.1/catalog/datasets/…/records`) oder ein CKAN-Datastore-Endpunkt (`…/api/3/action/datastore_search` bzw. `datastore_search_sql` mit `resource_id`) vorliegt, und wählt den passenden Abrufpfad.",
+    "Die App erkennt anhand der konfigurierten `apiurls.ladesaeulen` automatisch, ob ein OpenDataSoft-Records-API-Endpunkt (ODS v2.1, `…/api/explore/v2.1/catalog/datasets/…/records`) oder ein CKAN-Datastore-Endpunkt (`…/api/3/action/datastore_search` bzw. `datastore_search_sql` mit `resource_id`) vorliegt, und wählt den passenden Abrufpfad.",
     "",
     "Filter für Postleitzahl und Ort werden serverseitig umgesetzt: Eine Postleitzahl wird als Präfix gesucht (`postleitzahl LIKE '1234%'` bzw. `CAST(postleitzahl AS TEXT) LIKE` bei CKAN), ein Ortsname als Teiltreffer (`ort LIKE '%…%'` bzw. `ILIKE` bei CKAN). Ergebnisse werden paginiert mit `limit` 100 und `offset` geladen, bis alle Seiten abgerufen sind. Bei ODS wird zusätzlich der Katalog-Endpunkt des Datensatzes abgefragt, um aus `metas.modified` einen Datenstand-Hinweis abzuleiten.",
     "",
@@ -37,7 +37,7 @@
     "- **Datensatz:** [Ladesäulen in Deutschland](https://opendata.rhein-kreis-neuss.de/explore/dataset/rhein-kreis-neuss-ladesaulen-in-deutschland/)",
     "- **Ressource/API-Endpunkt:** [OpenDataSoft Records API](https://opendata.rhein-kreis-neuss.de/api/explore/v2.1/catalog/datasets/rhein-kreis-neuss-ladesaulen-in-deutschland/records)",
     "",
-    "Über das Feld `apiurl` lässt sich ein alternativer kompatibler Endpunkt einbinden – etwa eine ODS-v2.1-Records-URL oder eine CKAN-`datastore_search`/`datastore_search_sql`-URL mit `resource_id`. `urlDaten` zeigt auf die zugehörige Portalseite. Angezeigt werden die in der Quelle vorhandenen Ladepunkte; Verfügbarkeit und Aktualität hängen vom Pflegestand der Quelle ab.",
+    "Über das Feld `apiurls.ladesaeulen` lässt sich ein alternativer kompatibler Endpunkt einbinden – etwa eine ODS-v2.1-Records-URL oder eine CKAN-`datastore_search`/`datastore_search_sql`-URL mit `resource_id`. `urlDaten` zeigt auf die zugehörige Portalseite. Angezeigt werden die in der Quelle vorhandenen Ladepunkte; Verfügbarkeit und Aktualität hängen vom Pflegestand der Quelle ab.",
     "",
     "## Open Data App",
     "",
@@ -137,7 +137,7 @@
         "",
         "## Methodik",
         "",
-        "Die App erkennt anhand der konfigurierten `apiurl` automatisch, ob ein OpenDataSoft-Records-API-Endpunkt (ODS v2.1, `…/api/explore/v2.1/catalog/datasets/…/records`) oder ein CKAN-Datastore-Endpunkt (`…/api/3/action/datastore_search` bzw. `datastore_search_sql` mit `resource_id`) vorliegt, und wählt den passenden Abrufpfad.",
+        "Die App erkennt anhand der konfigurierten `apiurls.ladesaeulen` automatisch, ob ein OpenDataSoft-Records-API-Endpunkt (ODS v2.1, `…/api/explore/v2.1/catalog/datasets/…/records`) oder ein CKAN-Datastore-Endpunkt (`…/api/3/action/datastore_search` bzw. `datastore_search_sql` mit `resource_id`) vorliegt, und wählt den passenden Abrufpfad.",
         "",
         "Filter für Postleitzahl und Ort werden serverseitig umgesetzt: Eine Postleitzahl wird als Präfix gesucht (`postleitzahl LIKE '1234%'` bzw. `CAST(postleitzahl AS TEXT) LIKE` bei CKAN), ein Ortsname als Teiltreffer (`ort LIKE '%…%'` bzw. `ILIKE` bei CKAN). Ergebnisse werden paginiert mit `limit` 100 und `offset` geladen, bis alle Seiten abgerufen sind. Bei ODS wird zusätzlich der Katalog-Endpunkt des Datensatzes abgefragt, um aus `metas.modified` einen Datenstand-Hinweis abzuleiten.",
         "",
@@ -159,7 +159,7 @@
         "- **Datensatz:** [Ladesäulen in Deutschland](https://opendata.rhein-kreis-neuss.de/explore/dataset/rhein-kreis-neuss-ladesaulen-in-deutschland/)",
         "- **Ressource/API-Endpunkt:** [OpenDataSoft Records API](https://opendata.rhein-kreis-neuss.de/api/explore/v2.1/catalog/datasets/rhein-kreis-neuss-ladesaulen-in-deutschland/records)",
         "",
-        "Über das Feld `apiurl` lässt sich ein alternativer kompatibler Endpunkt einbinden – etwa eine ODS-v2.1-Records-URL oder eine CKAN-`datastore_search`/`datastore_search_sql`-URL mit `resource_id`. `urlDaten` zeigt auf die zugehörige Portalseite. Angezeigt werden die in der Quelle vorhandenen Ladepunkte; Verfügbarkeit und Aktualität hängen vom Pflegestand der Quelle ab.",
+        "Über das Feld `apiurls.ladesaeulen` lässt sich ein alternativer kompatibler Endpunkt einbinden – etwa eine ODS-v2.1-Records-URL oder eine CKAN-`datastore_search`/`datastore_search_sql`-URL mit `resource_id`. `urlDaten` zeigt auf die zugehörige Portalseite. Angezeigt werden die in der Quelle vorhandenen Ladepunkte; Verfügbarkeit und Aktualität hängen vom Pflegestand der Quelle ab.",
         "",
         "## Open Data App",
         "",
@@ -265,17 +265,24 @@
       },
       "erforderlich": "ja"
     },
-    "apiurl": {
-      "label": "URL zu den Ladesäulen-Daten",
+    "apiurls": {
+      "label": "URLs zu Datenressourcen",
       "category": "datenherkunft",
-      "hilfe": "API-Endpunkt des Ladesäulen-Datensatzes. Unterstützt werden entweder eine OpenDataSoft-records-URL oder eine CKAN-datastore_search-URL – hier bitte genau einen konkreten Endpunkt eintragen, kein Beispiel mit mehreren Formaten.",
+      "hilfe": "Direkter Download-, Datei- oder API-Endpunkt der tatsächlich verwendeten Datenquelle(n). Mehrere Einträge möglich.",
+      "typ": "array",
       "format": {
         "typ": "url",
-        "laenge": 255
+        "laenge": 500
       },
-      "default": "https://opendata.rhein-kreis-neuss.de/api/explore/v2.1/catalog/datasets/rhein-kreis-neuss-ladesaulen-in-deutschland/records",
-      "beispiel": "https://opendata.rhein-kreis-neuss.de/api/explore/v2.1/catalog/datasets/rhein-kreis-neuss-ladesaulen-in-deutschland/records",
-      "erforderlich": "ja"
+      "urls": [
+        {
+          "name": "ladesaeulen",
+          "label": "URL zu den Ladesäulen-Daten",
+          "default": "https://opendata.rhein-kreis-neuss.de/api/explore/v2.1/catalog/datasets/rhein-kreis-neuss-ladesaulen-in-deutschland/records",
+          "beispiel": "https://opendata.rhein-kreis-neuss.de/api/explore/v2.1/catalog/datasets/rhein-kreis-neuss-ladesaulen-in-deutschland/records",
+          "erforderlich": "ja"
+        }
+      ]
     },
     "sprache": {
       "label": "Sprache der App",

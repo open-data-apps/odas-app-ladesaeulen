@@ -5,11 +5,11 @@
  *
  * ConfigData:
  *   {
- *     "apiurl": "https://opendata.rhein-kreis-neuss.de/api/explore/v2.1/catalog/datasets/rhein-kreis-neuss-ladesaulen-in-deutschland/records"
+ *     "apiurls": [{ "name": "ladesaeulen", "label": "...", "url": "https://opendata.rhein-kreis-neuss.de/api/explore/v2.1/catalog/datasets/rhein-kreis-neuss-ladesaulen-in-deutschland/records" }]
  *   }
  *   oder
  *   {
- *     "apiurl": "https://<portal>/api/3/action/datastore_search?resource_id=<resource-id>"
+ *     "apiurls": [{ "name": "ladesaeulen", "label": "...", "url": "https://<portal>/api/3/action/datastore_search?resource_id=<resource-id>" }]
  *   }
  *
  * @param {Object} configdata
@@ -144,6 +144,17 @@ async function fetchOdasResource(targetUrl, configdata = {}) {
   }
 }
 
+/**
+ * Löst eine benannte Datenressource aus configdata.apiurls auf.
+ * Neue apiurls-Form (typ: "array"); das frühere skalare apiurl wird nicht mehr gelesen.
+ * @returns {string} getrimmte URL, oder "" für den Zustand "keine Quelle konfiguriert"
+ */
+function getOdasApiUrl(configdata, name) {
+  const liste = Array.isArray(configdata && configdata.apiurls) ? configdata.apiurls : [];
+  const treffer = liste.find((eintrag) => eintrag && eintrag.name === name);
+  return String((treffer && treffer.url) || "").trim();
+}
+
 async function fetchOdasJson(targetUrl, configdata = {}) {
   const rawContent = await fetchOdasResource(targetUrl, configdata);
   try {
@@ -168,7 +179,7 @@ function describeNonJsonPayload(rawContent) {
 
 function app(configdata = {}, enclosingHtmlDivElement) {
   const lsUid = "i" + ++lsInstanzZaehler;
-  const BASE_URL = configdata.apiurl;
+  const BASE_URL = getOdasApiUrl(configdata, "ladesaeulen");
 
   // F-42: pro Instanz geschlossener Runtime-State. `listeners` sammelt die
   // dokument-/window-weiten Listener-Referenzen (keydown/resize/scroll) als

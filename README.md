@@ -76,7 +76,7 @@ App läuft auf http://localhost:8089 (Konfiguration wird lokal geladen).
 
 | Parameter     | Beschreibung                                 | Pflicht |
 | ------------- | -------------------------------------------- | ------- |
-| `apiurl`      | URL zum API-Endpunkt der Ladesäulen-Daten    | ja      |
+| `apiurls`     | URLs zu Datenressourcen. Eintrag `ladesaeulen`: URL zum API-Endpunkt der Ladesäulen-Daten | ja (Eintrag `ladesaeulen`) |
 | `titel`       | Anzeigetitel der App                         | ja      |
 | `seitentitel` | Browser-Tab-Titel                            | ja      |
 | `urlDaten`    | URL zur Katalog-Seite des Datensatzes im ODP | ja      |
