@@ -2,7 +2,7 @@
 
 Interaktive Karte und Tabelle aller E-Ladesäulen in Deutschland für den [Open Data App Store](https://open-data-app-store.de/). Entspricht der [Open Data App-Spezifikation](https://open-data-apps.github.io/open-data-app-docs/open-data-app-spezifikation/). Mehr unter https://github.com/open-data-apps
 
-Version 1.1.0 — mit Schale 4 Verständlichkeits-Komponenten (Datenfrische-Indikator, weiterführende Links).
+Mit Schale 4 Verständlichkeits-Komponenten (Datenfrische-Indikator, weiterführende Links); aktueller Release-Stand siehe [CHANGELOG.md](CHANGELOG.md).
 
 ---
 
