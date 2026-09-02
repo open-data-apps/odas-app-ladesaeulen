@@ -1,14 +1,136 @@
 {
-    "app-entwickler-id": "12343",
-    "app-entwickler-name": "ondics-gmbh",
-    "name-in-url": "ladesaeulen",
-    "name": "Ladesäulen",
-    "app-version": "1.29.0",
-    "app-package-version": "2",
-    "odas-app-icon": "assets/odas-app-icon.svg",
-    "app-icon": "assets/odas-app-icon.svg",
-    "kurzbeschreibung": "Interaktive Karte und Tabelle aller öffentlichen E-Ladesäulen in Deutschland (Bundesnetzagentur-Daten).",
-    "beschreibung": [
+  "app-entwickler-id": "12343",
+  "app-entwickler-name": "ondics-gmbh",
+  "name-in-url": "ladesaeulen",
+  "name": "Ladesäulen",
+  "app-version": "1.29.0",
+  "app-package-version": "2",
+  "odas-app-icon": "assets/odas-app-icon.svg",
+  "app-icon": "assets/odas-app-icon.svg",
+  "kurzbeschreibung": "Interaktive Karte und Tabelle aller öffentlichen E-Ladesäulen in Deutschland (Bundesnetzagentur-Daten).",
+  "beschreibung": [
+    "_multiline_",
+    "Die Ladesäulen-App zeigt öffentliche Ladepunkte aus dem Ladesäulenregister der Bundesnetzagentur als interaktive Karte und Tabelle.",
+    "",
+    "Sie macht Standort, Betreiber, Steckertypen und weitere Merkmale leichter auffindbar und filterbar – mit Suche nach Ort oder Postleitzahl, Steckertyp-Filter, sortierbarer Detailtabelle und Kennzahlen. Die App richtet sich an Bürger:innen, Mobilitätsplanung, Verwaltung und Interessierte; besondere Datenkenntnisse sind für die Nutzung nicht erforderlich.",
+    "",
+    "## Methodik",
+    "",
+    "Die App erkennt anhand der konfigurierten `apiurls.ladesaeulen` automatisch, ob ein OpenDataSoft-Records-API-Endpunkt (ODS v2.1, `…/api/explore/v2.1/catalog/datasets/…/records`) oder ein CKAN-Datastore-Endpunkt (`…/api/3/action/datastore_search` bzw. `datastore_search_sql` mit `resource_id`) vorliegt, und wählt den passenden Abrufpfad.",
+    "",
+    "Filter für Postleitzahl und Ort werden serverseitig umgesetzt: Eine Postleitzahl wird als Präfix gesucht (`postleitzahl LIKE '1234%'` bzw. `CAST(postleitzahl AS TEXT) LIKE` bei CKAN), ein Ortsname als Teiltreffer (`ort LIKE '%…%'` bzw. `ILIKE` bei CKAN). Ergebnisse werden paginiert mit `limit` 100 und `offset` geladen, bis alle Seiten abgerufen sind. Bei ODS wird zusätzlich der Katalog-Endpunkt des Datensatzes abgefragt, um aus `metas.modified` einen Datenstand-Hinweis abzuleiten.",
+    "",
+    "Koordinaten werden aus mehreren Quellfeldern und Formaten normalisiert – etwa `koordinaten` als Objekt (`lat`/`lon`, `latitude`/`longitude`, `x`/`y`, Array `[lon, lat]`), als String `\"lat,lon\"` mit Komma/Punkt oder als JSON-Objekt, sowie Einzelfeldern wie `breitengrad`/`längengrad`, `laengengrad`, `longitude`/`latitude`, `x_koord`/`y_koord`. Vertauschte Breite/Länge werden erkannt und korrigiert; als gültig gelten nur Punkte innerhalb Deutschlands (etwa 47,2–55,1 Nord, 5,8–15,1 Ost). Datensätze ohne gültige Koordinaten bleiben in Tabelle und Kennzahlen enthalten und fehlen nur auf der Karte; ihre Anzahl wird als Hinweis angezeigt.",
+    "",
+    "Steckertypen (`steckertypen1` bis `steckertypen6`), Einzelleistungen (`p1_kw` bis `p6_kw`), Gesamtleistung `nennleistung_ladeeinrichtung_kw` und `art_der_ladeeinrichtung` (enthält „schnell“ → Schnelllader) werden für die Darstellung ausgewertet. Schnelllader und Normallader erhalten unterschiedliche Markerfarben und Symbole; die maximale Leistung wird als Kennzahl angezeigt.",
+    "",
+    "Auf Client-Seite erfolgen Filter und Auswertungen ohne erneute API-Anfrage: Steckertyp-Filter prüft die sechs Steckertyp-Felder auf Teiltreffer (z. B. `CCS`, `CHAdeMO`, `AC Typ 2`, `AC Schuko`), die Tabelle ist nach Betreiber, Adresse, Typ, Ladepunkten, Leistung und Stecker sortierbar (Klick auf Spaltenkopf), Kennzahlen zeigen die Anzahl Ladesäulen, die Summe der Ladepunkte und die maximale Leistung, und die Karte zeigt gefilterte Stationen mit Marker-Clustering und automatischem Kartenausschnitt.",
+    "",
+    "Liegen Koordinaten deutlich abseits des Medians der Ergebnismenge (Haversine-Distanz über einem dynamischen Radius je nach Trefferzahl), kann die App ersatzweise die Stationsadresse (Straße, Hausnummer, PLZ, Ort) über [photon.komoot.io](https://photon.komoot.io) geocodieren und die Position nur übernehmen, wenn sie näher am Median liegt. Die Karte nutzt Kacheln von [tile.openstreetmap.org](https://www.openstreetmap.org). Die Adress-Autocomplete für das Suchfeld fragt ebenfalls [photon.komoot.io](https://photon.komoot.io) ab – erst ab zwei Zeichen und nach Nutzerinteraktion, begrenzt auf Orte und Postleitzahlen im Deutschland-Ausschnitt. Links zu Google Maps sind reine Klick-Links (`https://www.google.com/maps/search/?api=1&query=…`), die erst beim Klick in einem neuen Tab geöffnet werden.",
+    "",
+    "Welche Felder tatsächlich belegt sind, wie umfassend belegt und wie aktuell die Liste ist, hängt von der angebundenen Quelle ab. Die Darstellung beruht auf den gelieferten Quellfeldern; Verfügbarkeit externer Dienste (Photon, OpenStreetMap, Google Maps) und deren Nutzungsbedingungen liegen außerhalb der App. Die App erhebt keinen Anspruch darauf, jede Station zu verorten, jederzeit aktuell und ohne Lücken abzubilden; behördliche Verbindlichkeit ist damit nicht verbunden.",
+    "",
+    "## Datenquelle",
+    "",
+    "Die Daten stammen aus dem Ladesäulenregister der Bundesnetzagentur und werden über eine konfigurierte Open-Data-Quelle bereitgestellt.",
+    "",
+    "- **Open Data Portal:** [Open Data Rhein-Kreis Neuss](https://opendata.rhein-kreis-neuss.de/)",
+    "- **Datensatz:** [Ladesäulen in Deutschland]({{{appinstanz.urlDaten}}})",
+    "- **Ressource/API-Endpunkt:** [OpenDataSoft Records API]({{{appinstanz.apiurls.1}}})",
+    "",
+    "Über das Feld `apiurls.ladesaeulen` lässt sich ein alternativer kompatibler Endpunkt einbinden – etwa eine ODS-v2.1-Records-URL oder eine CKAN-`datastore_search`/`datastore_search_sql`-URL mit `resource_id`. `urlDaten` zeigt auf die zugehörige Portalseite. Angezeigt werden die in der Quelle vorhandenen Ladepunkte; Verfügbarkeit und Aktualität hängen vom Pflegestand der Quelle ab.",
+    "",
+    "## Open Data App",
+    "",
+    "Diese App ist für den [Open Data App Store](https://open-data-app-store.de/) vorbereitet und kann mit eigenen Ladeinfrastruktur-Daten oder kompatiblen offenen Quellen betrieben werden. Weitere Informationen zu offenen Daten und Apps finden Sie im Store und in der Organisation.",
+    "",
+    "Die App ist Open Source und der Quellcode ist offen einsehbar:",
+    "",
+    "- [Open Data App Store](https://open-data-app-store.de/) – die Plattform für Open Data Apps",
+    "- [Alle Open Data Apps auf GitHub](https://github.com/open-data-apps) – die Organisation mit allen Apps",
+    "- [odas-app-ladesaeulen](https://github.com/open-data-apps/odas-app-ladesaeulen) – das Repository dieser App"
+  ],
+  "tags-funktion": [
+    "Karte",
+    "Suche",
+    "Filter",
+    "Tabelle"
+  ],
+  "tags-dateityp": [
+    "JSON"
+  ],
+  "tags-datenart": [
+    "Mobilität",
+    "Energie",
+    "E-Mobilität"
+  ],
+  "screenshots": [
+    "assets/Desktop_Screenshot.png",
+    "assets/Mobile_Screenshot.png"
+  ],
+  "branding-css": "",
+  "api-version": "1",
+  "instanz-config": {
+    "seitentitel": {
+      "label": "Seitentitel",
+      "category": "allgemein",
+      "hilfe": "Der Seitentitel wird im Browser-Tab der App angezeigt",
+      "default": "E-Ladesäulen Karte",
+      "format": {
+        "typ": "string",
+        "laenge": 50
+      },
+      "erforderlich": "ja"
+    },
+    "titel": {
+      "label": "Titel",
+      "category": "allgemein",
+      "hilfe": "Der Titel wird in der Titelzeile der App angezeigt",
+      "default": "E-Ladesäulen Karte Deutschland",
+      "format": {
+        "typ": "string",
+        "laenge": 50
+      },
+      "erforderlich": "ja"
+    },
+    "icon": {
+      "label": "App-Icon",
+      "category": "allgemein",
+      "hilfe": "Das Icon wird links oben in der Titelzeile angezeigt",
+      "default": "{{{odp.logo}}}",
+      "format": {
+        "typ": "image",
+        "hoehe": 100,
+        "breite": 300
+      },
+      "erforderlich": "ja"
+    },
+    "kontakt": {
+      "label": "Kontakt",
+      "category": "kontakt-rechtliches",
+      "hilfe": "Der Text wird im Menüpunkt 'Kontakt' angezeigt",
+      "format": {
+        "typ": "markdown"
+      },
+      "default": [
+        "_multiline_",
+        "Sie sind zufrieden mit der App oder haben Anregungen, Verbesserungen oder Hinweise, die Sie uns mitteilen möchten?",
+        "",
+        "Dann richten Sie sich gerne an uns. Wir freuen uns über alle Nachrichten. Ihre Nachrichten können Sie uns mitteilen über:",
+        "",
+        "- Tel.: [{{odp.anbieter.tel}}](tel:{{odp.anbieter.tel}})",
+        "- E-Mail: [{{odp.anbieter.email}}](mailto:{{odp.anbieter.email}})"
+      ],
+      "erforderlich": "ja"
+    },
+    "beschreibung": {
+      "label": "Beschreibung",
+      "category": "beschreibung",
+      "hilfe": "Der Text wird im Menüpunkt 'Über diese App' angezeigt",
+      "format": {
+        "typ": "markdown"
+      },
+      "default": [
         "_multiline_",
         "Die Ladesäulen-App zeigt öffentliche Ladepunkte aus dem Ladesäulenregister der Bundesnetzagentur als interaktive Karte und Tabelle.",
         "",
@@ -49,346 +171,224 @@
         "- [Open Data App Store](https://open-data-app-store.de/) – die Plattform für Open Data Apps",
         "- [Alle Open Data Apps auf GitHub](https://github.com/open-data-apps) – die Organisation mit allen Apps",
         "- [odas-app-ladesaeulen](https://github.com/open-data-apps/odas-app-ladesaeulen) – das Repository dieser App"
-    ],
-    "tags-funktion": [
-        "Karte",
-        "Suche",
-        "Filter",
-        "Tabelle"
-    ],
-    "tags-dateityp": [
-        "JSON"
-    ],
-    "tags-datenart": [
-        "Mobilität",
-        "Energie",
-        "E-Mobilität"
-    ],
-    "screenshots": [
-        "assets/Desktop_Screenshot.png",
-        "assets/Mobile_Screenshot.png"
-    ],
-    "branding-css": "",
-    "api-version": "1",
-    "instanz-config": {
-        "seitentitel": {
-            "label": "Seitentitel",
-            "category": "allgemein",
-            "hilfe": "Der Seitentitel wird im Browser-Tab der App angezeigt",
-            "default": "E-Ladesäulen Karte",
-            "format": {
-                "typ": "string",
-                "laenge": 50
-            },
-            "erforderlich": "ja"
-        },
-        "titel": {
-            "label": "Titel",
-            "category": "allgemein",
-            "hilfe": "Der Titel wird in der Titelzeile der App angezeigt",
-            "default": "E-Ladesäulen Karte Deutschland",
-            "format": {
-                "typ": "string",
-                "laenge": 50
-            },
-            "erforderlich": "ja"
-        },
-        "icon": {
-            "label": "App-Icon",
-            "category": "allgemein",
-            "hilfe": "Das Icon wird links oben in der Titelzeile angezeigt",
-            "default": "{{{odp.logo}}}",
-            "format": {
-                "typ": "image",
-                "hoehe": 100,
-                "breite": 300
-            },
-            "erforderlich": "ja"
-        },
-        "kontakt": {
-            "label": "Kontakt",
-            "category": "kontakt-rechtliches",
-            "hilfe": "Der Text wird im Menüpunkt 'Kontakt' angezeigt",
-            "format": {
-                "typ": "markdown"
-            },
-            "default": [
-                "_multiline_",
-                "Sie sind zufrieden mit der App oder haben Anregungen, Verbesserungen oder Hinweise, die Sie uns mitteilen möchten?",
-                "",
-                "Dann richten Sie sich gerne an uns. Wir freuen uns über alle Nachrichten. Ihre Nachrichten können Sie uns mitteilen über:",
-                "",
-                "- Tel.: [{{odp.anbieter.tel}}](tel:{{odp.anbieter.tel}})",
-                "- E-Mail: [{{odp.anbieter.email}}](mailto:{{odp.anbieter.email}})"
-            ],
-            "erforderlich": "ja"
-        },
-        "beschreibung": {
-            "label": "Beschreibung",
-            "category": "beschreibung",
-            "hilfe": "Der Text wird im Menüpunkt 'Über diese App' angezeigt",
-            "format": {
-                "typ": "markdown"
-            },
-            "default": [
-                "_multiline_",
-                "Die Ladesäulen-App zeigt öffentliche Ladepunkte aus dem Ladesäulenregister der Bundesnetzagentur als interaktive Karte und Tabelle.",
-                "",
-                "Sie macht Standort, Betreiber, Steckertypen und weitere Merkmale leichter auffindbar und filterbar – mit Suche nach Ort oder Postleitzahl, Steckertyp-Filter, sortierbarer Detailtabelle und Kennzahlen. Die App richtet sich an Bürger:innen, Mobilitätsplanung, Verwaltung und Interessierte; besondere Datenkenntnisse sind für die Nutzung nicht erforderlich.",
-                "",
-                "## Methodik",
-                "",
-                "Die App erkennt anhand der konfigurierten `apiurls.ladesaeulen` automatisch, ob ein OpenDataSoft-Records-API-Endpunkt (ODS v2.1, `…/api/explore/v2.1/catalog/datasets/…/records`) oder ein CKAN-Datastore-Endpunkt (`…/api/3/action/datastore_search` bzw. `datastore_search_sql` mit `resource_id`) vorliegt, und wählt den passenden Abrufpfad.",
-                "",
-                "Filter für Postleitzahl und Ort werden serverseitig umgesetzt: Eine Postleitzahl wird als Präfix gesucht (`postleitzahl LIKE '1234%'` bzw. `CAST(postleitzahl AS TEXT) LIKE` bei CKAN), ein Ortsname als Teiltreffer (`ort LIKE '%…%'` bzw. `ILIKE` bei CKAN). Ergebnisse werden paginiert mit `limit` 100 und `offset` geladen, bis alle Seiten abgerufen sind. Bei ODS wird zusätzlich der Katalog-Endpunkt des Datensatzes abgefragt, um aus `metas.modified` einen Datenstand-Hinweis abzuleiten.",
-                "",
-                "Koordinaten werden aus mehreren Quellfeldern und Formaten normalisiert – etwa `koordinaten` als Objekt (`lat`/`lon`, `latitude`/`longitude`, `x`/`y`, Array `[lon, lat]`), als String `\"lat,lon\"` mit Komma/Punkt oder als JSON-Objekt, sowie Einzelfeldern wie `breitengrad`/`längengrad`, `laengengrad`, `longitude`/`latitude`, `x_koord`/`y_koord`. Vertauschte Breite/Länge werden erkannt und korrigiert; als gültig gelten nur Punkte innerhalb Deutschlands (etwa 47,2–55,1 Nord, 5,8–15,1 Ost). Datensätze ohne gültige Koordinaten bleiben in Tabelle und Kennzahlen enthalten und fehlen nur auf der Karte; ihre Anzahl wird als Hinweis angezeigt.",
-                "",
-                "Steckertypen (`steckertypen1` bis `steckertypen6`), Einzelleistungen (`p1_kw` bis `p6_kw`), Gesamtleistung `nennleistung_ladeeinrichtung_kw` und `art_der_ladeeinrichtung` (enthält „schnell“ → Schnelllader) werden für die Darstellung ausgewertet. Schnelllader und Normallader erhalten unterschiedliche Markerfarben und Symbole; die maximale Leistung wird als Kennzahl angezeigt.",
-                "",
-                "Auf Client-Seite erfolgen Filter und Auswertungen ohne erneute API-Anfrage: Steckertyp-Filter prüft die sechs Steckertyp-Felder auf Teiltreffer (z. B. `CCS`, `CHAdeMO`, `AC Typ 2`, `AC Schuko`), die Tabelle ist nach Betreiber, Adresse, Typ, Ladepunkten, Leistung und Stecker sortierbar (Klick auf Spaltenkopf), Kennzahlen zeigen die Anzahl Ladesäulen, die Summe der Ladepunkte und die maximale Leistung, und die Karte zeigt gefilterte Stationen mit Marker-Clustering und automatischem Kartenausschnitt.",
-                "",
-                "Liegen Koordinaten deutlich abseits des Medians der Ergebnismenge (Haversine-Distanz über einem dynamischen Radius je nach Trefferzahl), kann die App ersatzweise die Stationsadresse (Straße, Hausnummer, PLZ, Ort) über [photon.komoot.io](https://photon.komoot.io) geocodieren und die Position nur übernehmen, wenn sie näher am Median liegt. Die Karte nutzt Kacheln von [tile.openstreetmap.org](https://www.openstreetmap.org). Die Adress-Autocomplete für das Suchfeld fragt ebenfalls [photon.komoot.io](https://photon.komoot.io) ab – erst ab zwei Zeichen und nach Nutzerinteraktion, begrenzt auf Orte und Postleitzahlen im Deutschland-Ausschnitt. Links zu Google Maps sind reine Klick-Links (`https://www.google.com/maps/search/?api=1&query=…`), die erst beim Klick in einem neuen Tab geöffnet werden.",
-                "",
-                "Welche Felder tatsächlich belegt sind, wie umfassend belegt und wie aktuell die Liste ist, hängt von der angebundenen Quelle ab. Die Darstellung beruht auf den gelieferten Quellfeldern; Verfügbarkeit externer Dienste (Photon, OpenStreetMap, Google Maps) und deren Nutzungsbedingungen liegen außerhalb der App. Die App erhebt keinen Anspruch darauf, jede Station zu verorten, jederzeit aktuell und ohne Lücken abzubilden; behördliche Verbindlichkeit ist damit nicht verbunden.",
-                "",
-                "## Datenquelle",
-                "",
-                "Die Daten stammen aus dem Ladesäulenregister der Bundesnetzagentur und werden über eine konfigurierte Open-Data-Quelle bereitgestellt.",
-                "",
-                "- **Open Data Portal:** [Open Data Rhein-Kreis Neuss](https://opendata.rhein-kreis-neuss.de/)",
-                "- **Datensatz:** [Ladesäulen in Deutschland]({{{appinstanz.urlDaten}}})",
-                "- **Ressource/API-Endpunkt:** [OpenDataSoft Records API]({{{appinstanz.apiurls.1}}})",
-                "",
-                "Über das Feld `apiurls.ladesaeulen` lässt sich ein alternativer kompatibler Endpunkt einbinden – etwa eine ODS-v2.1-Records-URL oder eine CKAN-`datastore_search`/`datastore_search_sql`-URL mit `resource_id`. `urlDaten` zeigt auf die zugehörige Portalseite. Angezeigt werden die in der Quelle vorhandenen Ladepunkte; Verfügbarkeit und Aktualität hängen vom Pflegestand der Quelle ab.",
-                "",
-                "## Open Data App",
-                "",
-                "Diese App ist für den [Open Data App Store](https://open-data-app-store.de/) vorbereitet und kann mit eigenen Ladeinfrastruktur-Daten oder kompatiblen offenen Quellen betrieben werden. Weitere Informationen zu offenen Daten und Apps finden Sie im Store und in der Organisation.",
-                "",
-                "Die App ist Open Source und der Quellcode ist offen einsehbar:",
-                "",
-                "- [Open Data App Store](https://open-data-app-store.de/) – die Plattform für Open Data Apps",
-                "- [Alle Open Data Apps auf GitHub](https://github.com/open-data-apps) – die Organisation mit allen Apps",
-                "- [odas-app-ladesaeulen](https://github.com/open-data-apps/odas-app-ladesaeulen) – das Repository dieser App"
-            ],
-            "erforderlich": "ja"
-        },
-        "impressum": {
-            "label": "Impressum",
-            "category": "kontakt-rechtliches",
-            "hilfe": "Der Text wird im Menüpunkt 'Impressum' angezeigt",
-            "format": {
-                "typ": "markdown"
-            },
-            "default": [
-                "_multiline_",
-                "## Anbieter",
-                "",
-                "{{{odp.anbieter.orgName}}}  ",
-                "{{{odp.anbieter.orgUnit}}}",
-                "",
-                "{{odp.anbieter.strasse}}  ",
-                "{{odp.anbieter.plzort}}",
-                "",
-                "Website: [{{odp.anbieter.url}}]({{odp.anbieter.url}})",
-                "",
-                "## Ansprechpartner",
-                "",
-                "{{odp.anbieter.kontakt-bezeichnung}}  ",
-                "{{odp.anbieter.name}}",
-                "",
-                "## Kontakt",
-                "",
-                "Tel.: {{odp.anbieter.tel}}  ",
-                "E-Mail: [{{odp.anbieter.email}}](mailto:{{odp.anbieter.email}})"
-            ],
-            "erforderlich": "ja"
-        },
-        "datenschutz": {
-            "label": "Datenschutz",
-            "category": "kontakt-rechtliches",
-            "hilfe": "Der Text wird im Menüpunkt 'Datenschutz' angezeigt",
-            "format": {
-                "typ": "markdown"
-            },
-            "default": [
-                "_multiline_",
-                "Diese App verarbeitet die angezeigten offenen Daten ausschließlich im Browser. Es werden keine Cookies gesetzt, keine Nutzungsstatistiken erhoben und keine Daten im Browser gespeichert.",
-                "",
-                "Alle für die Darstellung benötigten Programmbibliotheken werden mit der App ausgeliefert. Beim Aufruf werden dafür keine externen Server kontaktiert.",
-                "",
-                "Die angezeigten Daten werden vom Browser direkt aus der konfigurierten Datenquelle geladen. Dabei werden technisch bedingt IP-Adresse und Browserkennung an deren Betreiber übermittelt. Maßgeblich ist der Schalter `proxyAktiv` der Instanz-Konfiguration.",
-                "",
-                "## Beim Aufruf kontaktierte Drittanbieter",
-                "",
-                "Folgende externe Server werden kontaktiert. Dabei werden IP-Adresse und User-Agent der Besucher:innen an diese Anbieter übertragen:",
-                "",
-                "- **tile.openstreetmap.org** — Kartenkacheln (OpenStreetMap)",
-                "- **google.com/maps** — externer Routen-/Kartenlink (öffnet erst bei Klick in einem neuen Tab)",
-                "- **photon.komoot.io** — Orts- und Adresssuche (Photon); übertragen: Stationsadressen bzw. eingegebene Suchbegriffe, IP-Adresse, User-Agent; Abruf erst bei Nutzerinteraktion bzw. Korrekturabgleich"
-            ],
-            "erforderlich": "ja"
-        },
-        "urlDaten": {
-            "label": "URL zum Datensatz im ODP",
-            "category": "datenherkunft",
-            "hilfe": "URL zur Katalog-Seite des Ladesäulen-Datensatzes im Open Data Portal",
-            "format": {
-                "typ": "url"
-            },
-            "default": "https://opendata.rhein-kreis-neuss.de/explore/dataset/rhein-kreis-neuss-ladesaulen-in-deutschland/",
-            "beispiel": "https://opendata.rhein-kreis-neuss.de/explore/dataset/rhein-kreis-neuss-ladesaulen-in-deutschland/",
-            "erforderlich": "ja"
-        },
-        "fusszeile": {
-            "label": "Fußzeile",
-            "category": "kontakt-rechtliches",
-            "hilfe": "Wird auf der Website unten in der Fusszeile angezeigt.",
-            "format": {
-                "typ": "string",
-                "laenge": 50
-            },
-            "default": "(C) Copyright {{jahr}} | App & Daten: {{odp.anbieter.name}} | App-Entwickler: {{app.developer.name}} | ODAS: {{odas.betreiber.name}}",
-            "erforderlich": "ja"
-        },
-        "proxyAktiv": {
-            "label": "ODAS-Proxy aktivieren",
-            "category": "datenherkunft",
-            "hilfe": "Mit ja werden Datenabrufe über den ODAS-Proxy gesendet. Der Proxy ist nur im ODAS-Live-System verfügbar; Entwicklung und Standalone verwenden nein.",
-            "default": "nein",
-            "format": {
-                "typ": "dropdown",
-                "optionen": [
-                    "nein",
-                    "ja"
-                ]
-            },
-            "erforderlich": "ja"
-        },
-        "apiurls": {
-            "label": "URLs zu Datenressourcen",
-            "category": "datenherkunft",
-            "hilfe": "Direkter Download-, Datei- oder API-Endpunkt der tatsächlich verwendeten Datenquelle(n). Mehrere Einträge möglich.",
-            "typ": "array",
-            "format": {
-                "typ": "url",
-                "laenge": 500
-            },
-            "urls": [
-                {
-                    "name": "ladesaeulen",
-                    "label": "URL zu den Ladesäulen-Daten",
-                    "default": "https://opendata.rhein-kreis-neuss.de/api/explore/v2.1/catalog/datasets/rhein-kreis-neuss-ladesaulen-in-deutschland/records",
-                    "beispiel": "https://opendata.rhein-kreis-neuss.de/api/explore/v2.1/catalog/datasets/rhein-kreis-neuss-ladesaulen-in-deutschland/records",
-                    "erforderlich": "ja"
-                }
-            ]
-        },
-        "sprache": {
-            "label": "Sprache der App",
-            "category": "allgemein",
-            "hilfe": "Angabe der App-Sprache",
-            "default": "de",
-            "format": {
-                "typ": "dropdown",
-                "optionen": [
-                    "de"
-                ]
-            },
-            "erforderlich": "ja"
-        },
-        "weiterfuehrendeLinks": {
-            "label": "Weiterführende Links",
-            "category": "beschreibung",
-            "hilfe": "Verwandte Datensätze / Hintergrundquellen (HTML/Markdown). Leer = ausgeblendet.",
-            "format": {
-                "typ": "markdown"
-            },
-            "default": "- [Bundesnetzagentur – Ladesäulenregister](https://www.bundesnetzagentur.de/DE/Fachthemen/ElektrizitaetundGas/E-Mobilitaet/Ladesaeulenkarte_node.html)\n- [Open Data Portal Rhein-Kreis-Neuss](https://opendata.rhein-kreis-neuss.de/explore/dataset/rhein-kreis-neuss-ladesaulen-in-deutschland/)",
-            "erforderlich": "nein"
-        },
-        "datenquelleHinweis": {
-            "label": "Methodik / Datenquelle-Hinweis",
-            "category": "beschreibung",
-            "hilfe": "Herkunft, Erhebungsmethode und Limitierungen (HTML/Markdown). Leer = ausgeblendet.",
-            "format": {
-                "typ": "markdown"
-            },
-            "default": "Die Ladesäulendaten stammen aus dem Ladesäulenregister der Bundesnetzagentur und werden über eine konfigurierte Open-Data-Quelle abgerufen. Die App normalisiert Standort-, Betreiber- und Steckertypinformationen für Karte, Suche und Tabelle; Aktualität und Vollständigkeit hängen von der angebundenen Quelle ab.",
-            "erforderlich": "nein"
-        },
-        "datenStand": {
-            "label": "Datenstand",
-            "category": "beschreibung",
-            "hilfe": "Freitext-Hinweis zum Stand der Daten. Leer = ausgeblendet.",
-            "format": {
-                "typ": "string",
-                "laenge": 60
-            },
-            "default": "Stand: Live-Abruf aus der konfigurierten Ladesäulen-Quelle",
-            "erforderlich": "nein"
-        },
-        "kpiKontext1": {
-            "label": "KPI-Erklärung 1: Ladesäulen",
-            "category": "beschreibung",
-            "hilfe": "Erklärtext unter dem KPI-Wert. Leer = ausgeblendet.",
-            "format": {
-                "typ": "string",
-                "laenge": 250
-            },
-            "default": "Anzahl der Ladesäulen-Standorte im sichtbaren Bereich. Jeder Standort kann mehrere einzelne Ladepunkte umfassen.",
-            "erforderlich": "nein"
-        },
-        "kpiKontext2": {
-            "label": "KPI-Erklärung 2: Ladepunkte gesamt",
-            "category": "beschreibung",
-            "hilfe": "Erklärtext unter dem KPI-Wert. Leer = ausgeblendet.",
-            "format": {
-                "typ": "string",
-                "laenge": 250
-            },
-            "default": "Gesamtzahl aller einzelnen Ladepunkte. Jeder Ladepunkt kann jeweils ein Elektrofahrzeug gleichzeitig laden.",
-            "erforderlich": "nein"
-        },
-        "kpiKontext3": {
-            "label": "KPI-Erklärung 3: Max. Leistung (kW)",
-            "category": "beschreibung",
-            "hilfe": "Erklärtext unter dem KPI-Wert. Leer = ausgeblendet.",
-            "format": {
-                "typ": "string",
-                "laenge": 250
-            },
-            "default": "Höchste verfügbare Ladeleistung in Kilowatt (kW). Je höher die Leistung, desto schneller kann ein E-Auto an diesem Standort laden.",
-            "erforderlich": "nein"
-        },
-        "brandingCSS": {
-            "label": "Zusätzliches Branding-CSS",
-            "category": "sonstiges",
-            "hilfe": "Optionaler CSS-Code für die konkrete App-Instanz.",
-            "default": "",
-            "format": {
-                "typ": "string",
-                "laenge": 10000
-            },
-            "erforderlich": "nein"
-        },
-        "brandingCSSFile": {
-            "label": "Branding-CSS-Datei",
-            "category": "sonstiges",
-            "hilfe": "Optionale URL zu einer zusätzlichen CSS-Datei für die konkrete App-Instanz.",
-            "default": "",
-            "format": {
-                "typ": "url",
-                "laenge": 500
-            },
-            "erforderlich": "nein"
-        }
+      ],
+      "erforderlich": "ja"
     },
-    "daten": {
-        "beschreibung": "Die Ladesäulen-App verarbeitet konfigurierbare Open-Data-Ressourcen aus dem Open Data Portal (z.B. JSON- oder CSV-Endpunkte).",
-        "schema": "assets/schema.json",
-        "beispiel": "",
-        "beispiel-url": ""
+    "impressum": {
+      "label": "Impressum",
+      "category": "kontakt-rechtliches",
+      "hilfe": "Der Text wird im Menüpunkt 'Impressum' angezeigt",
+      "format": {
+        "typ": "markdown"
+      },
+      "default": [
+        "_multiline_",
+        "## Anbieter",
+        "",
+        "{{{odp.anbieter.orgName}}}  ",
+        "{{{odp.anbieter.orgUnit}}}",
+        "",
+        "{{odp.anbieter.strasse}}  ",
+        "{{odp.anbieter.plzort}}",
+        "",
+        "Website: [{{odp.anbieter.url}}]({{odp.anbieter.url}})",
+        "",
+        "## Ansprechpartner",
+        "",
+        "{{odp.anbieter.kontakt-bezeichnung}}  ",
+        "{{odp.anbieter.name}}",
+        "",
+        "## Kontakt",
+        "",
+        "Tel.: {{odp.anbieter.tel}}  ",
+        "E-Mail: [{{odp.anbieter.email}}](mailto:{{odp.anbieter.email}})"
+      ],
+      "erforderlich": "ja"
+    },
+    "datenschutz": {
+      "label": "Datenschutz",
+      "category": "kontakt-rechtliches",
+      "hilfe": "Der Text wird im Menüpunkt 'Datenschutz' angezeigt",
+      "format": {
+        "typ": "markdown"
+      },
+      "default": [
+        "_multiline_",
+        "Diese App verarbeitet die angezeigten offenen Daten ausschließlich im Browser. Es werden keine Cookies gesetzt, keine Nutzungsstatistiken erhoben und keine Daten im Browser gespeichert.",
+        "",
+        "Alle für die Darstellung benötigten Programmbibliotheken werden mit der App ausgeliefert. Beim Aufruf werden dafür keine externen Server kontaktiert.",
+        "",
+        "Die angezeigten Daten werden vom Browser direkt aus der konfigurierten Datenquelle geladen. Dabei werden technisch bedingt IP-Adresse und Browserkennung an deren Betreiber übermittelt. Maßgeblich ist der Schalter `proxyAktiv` der Instanz-Konfiguration.",
+        "",
+        "## Beim Aufruf kontaktierte Drittanbieter",
+        "",
+        "Folgende externe Server werden kontaktiert. Dabei werden IP-Adresse und User-Agent der Besucher:innen an diese Anbieter übertragen:",
+        "",
+        "- **tile.openstreetmap.org** — Kartenkacheln (OpenStreetMap)",
+        "- **google.com/maps** — externer Routen-/Kartenlink (öffnet erst bei Klick in einem neuen Tab)",
+        "- **photon.komoot.io** — Orts- und Adresssuche (Photon); übertragen: Stationsadressen bzw. eingegebene Suchbegriffe, IP-Adresse, User-Agent; Abruf erst bei Nutzerinteraktion bzw. Korrekturabgleich"
+      ],
+      "erforderlich": "ja"
+    },
+    "urlDaten": {
+      "label": "URL zum Datensatz im ODP",
+      "category": "datenherkunft",
+      "hilfe": "Link zur Beschreibungsseite des Datensatzes im Open-Data-Portal (…/dataset/… oder Portal-Start) – nicht der API-Endpunkt. Wird in der App unter „Über diese App → Datenquelle“ verlinkt.",
+      "format": {
+        "typ": "url"
+      },
+      "default": "https://opendata.rhein-kreis-neuss.de/explore/dataset/rhein-kreis-neuss-ladesaulen-in-deutschland/",
+      "beispiel": "https://opendata.rhein-kreis-neuss.de/explore/dataset/rhein-kreis-neuss-ladesaulen-in-deutschland/",
+      "erforderlich": "ja"
+    },
+    "fusszeile": {
+      "label": "Fußzeile",
+      "category": "kontakt-rechtliches",
+      "hilfe": "Wird auf der Website unten in der Fusszeile angezeigt.",
+      "format": {
+        "typ": "string",
+        "laenge": 50
+      },
+      "default": "(C) Copyright {{jahr}} | App & Daten: {{odp.anbieter.name}} | App-Entwickler: {{app.developer.name}} | ODAS: {{odas.betreiber.name}}",
+      "erforderlich": "ja"
+    },
+    "proxyAktiv": {
+      "label": "ODAS-Proxy aktivieren",
+      "category": "datenherkunft",
+      "hilfe": "Mit ja läuft der Datenabruf über den ODAS-Proxy /odp-data (nur im ODAS-Live-System, nur freigegebene Quellen – Origin-Allowlist). Mit nein direkt im Browser (braucht CORS der Quelle). Lokal immer nein testen.",
+      "default": "nein",
+      "format": {
+        "typ": "dropdown",
+        "optionen": [
+          "nein",
+          "ja"
+        ]
+      },
+      "erforderlich": "ja"
+    },
+    "apiurls": {
+      "label": "URLs zu Datenressourcen",
+      "category": "datenherkunft",
+      "hilfe": "Diese App unterstützt zwei Typen: „Open-Data-Suche (API v2.1)“ (…/api/explore/v2.1/…) oder „Tabellen-API mit Daten-ID“ (…/api/3/action/datastore_search?resource_id=…). Kopieren Sie je nach Portal den passenden Link. Beispiel ODS: https://opendata.rhein-kreis-neuss.de/api/explore/v2.1/catalog/datasets/rhein-kreis-neuss-ladesaulen-in-deutschland/exports/json – Beispiel Tabellen-API: https://opendata.rhein-kreis-neuss.de/api/3/action/datastore_search?resource_id=xxx&limit=100. Hilfe-Tooltip beachten.",
+      "typ": "array",
+      "format": {
+        "typ": "url",
+        "laenge": 500
+      },
+      "urls": [
+        {
+          "name": "ladesaeulen",
+          "label": "Open-Data-Suche oder Tabellen-API – Ladesäulen",
+          "default": "https://opendata.rhein-kreis-neuss.de/api/explore/v2.1/catalog/datasets/rhein-kreis-neuss-ladesaulen-in-deutschland/records",
+          "beispiel": "https://opendata.rhein-kreis-neuss.de/api/explore/v2.1/catalog/datasets/rhein-kreis-neuss-ladesaulen-in-deutschland/records",
+          "erforderlich": "ja"
+        }
+      ]
+    },
+    "sprache": {
+      "label": "Sprache der App",
+      "category": "allgemein",
+      "hilfe": "Angabe der App-Sprache",
+      "default": "de",
+      "format": {
+        "typ": "dropdown",
+        "optionen": [
+          "de"
+        ]
+      },
+      "erforderlich": "ja"
+    },
+    "weiterfuehrendeLinks": {
+      "label": "Weiterführende Links",
+      "category": "beschreibung",
+      "hilfe": "Links zu verwandten Datensätzen/Hintergrundquellen (Markdown/HTML). Leer = Abschnitt ausgeblendet.",
+      "format": {
+        "typ": "markdown"
+      },
+      "default": "- [Bundesnetzagentur – Ladesäulenregister](https://www.bundesnetzagentur.de/DE/Fachthemen/ElektrizitaetundGas/E-Mobilitaet/Ladesaeulenkarte_node.html)\n- [Open Data Portal Rhein-Kreis-Neuss](https://opendata.rhein-kreis-neuss.de/explore/dataset/rhein-kreis-neuss-ladesaulen-in-deutschland/)",
+      "erforderlich": "nein"
+    },
+    "datenquelleHinweis": {
+      "label": "Methodik / Datenquelle-Hinweis",
+      "category": "beschreibung",
+      "hilfe": "Herkunft, Erhebungsmethode, Zeitbezug und Limitierungen (Markdown/HTML). Leer = Hinweis-Box ausgeblendet. Beispiel: „Erhebung: Stadt Dortmund, Methode: Melderegister, Stand: 2024, Limit: nur freigegebene Daten“.",
+      "format": {
+        "typ": "markdown"
+      },
+      "default": "Die Ladesäulendaten stammen aus dem Ladesäulenregister der Bundesnetzagentur und werden über eine konfigurierte Open-Data-Quelle abgerufen. Die App normalisiert Standort-, Betreiber- und Steckertypinformationen für Karte, Suche und Tabelle; Aktualität und Vollständigkeit hängen von der angebundenen Quelle ab.",
+      "erforderlich": "nein"
+    },
+    "datenStand": {
+      "label": "Datenstand",
+      "category": "beschreibung",
+      "hilfe": "Zeitpunkt der letzten Datenaktualisierung (z. B. „Stand: Jan 2025“ oder „Datenstand: 2024“). Leer = kein Datum angezeigt.",
+      "format": {
+        "typ": "string",
+        "laenge": 60
+      },
+      "default": "Stand: Live-Abruf aus der konfigurierten Ladesäulen-Quelle",
+      "erforderlich": "nein"
+    },
+    "kpiKontext1": {
+      "label": "KPI-Erklärung 1: Ladesäulen",
+      "category": "beschreibung",
+      "hilfe": "Erklärt die KPI „: Ladesäulen“ – Erklärungstext unter dem KPI-Wert. Leer lassen blendet den Hinweis unter der KPI aus.",
+      "format": {
+        "typ": "string",
+        "laenge": 250
+      },
+      "default": "Anzahl der Ladesäulen-Standorte im sichtbaren Bereich. Jeder Standort kann mehrere einzelne Ladepunkte umfassen.",
+      "erforderlich": "nein"
+    },
+    "kpiKontext2": {
+      "label": "KPI-Erklärung 2: Ladepunkte gesamt",
+      "category": "beschreibung",
+      "hilfe": "Erklärt die KPI „: Ladepunkte gesamt“ – Erklärungstext unter dem KPI-Wert. Leer lassen blendet den Hinweis unter der KPI aus.",
+      "format": {
+        "typ": "string",
+        "laenge": 250
+      },
+      "default": "Gesamtzahl aller einzelnen Ladepunkte. Jeder Ladepunkt kann jeweils ein Elektrofahrzeug gleichzeitig laden.",
+      "erforderlich": "nein"
+    },
+    "kpiKontext3": {
+      "label": "KPI-Erklärung 3: Max. Leistung (kW)",
+      "category": "beschreibung",
+      "hilfe": "Erklärt die KPI „: Max. Leistung (kW“ – Erklärungstext unter dem KPI-Wert. Leer lassen blendet den Hinweis unter der KPI aus.",
+      "format": {
+        "typ": "string",
+        "laenge": 250
+      },
+      "default": "Höchste verfügbare Ladeleistung in Kilowatt (kW). Je höher die Leistung, desto schneller kann ein E-Auto an diesem Standort laden.",
+      "erforderlich": "nein"
+    },
+    "brandingCSS": {
+      "label": "Zusätzliches Branding-CSS",
+      "category": "sonstiges",
+      "hilfe": "Optionaler CSS-Code für die konkrete App-Instanz.",
+      "default": "",
+      "format": {
+        "typ": "string",
+        "laenge": 10000
+      },
+      "erforderlich": "nein"
+    },
+    "brandingCSSFile": {
+      "label": "Branding-CSS-Datei",
+      "category": "sonstiges",
+      "hilfe": "Optionale URL zu einer zusätzlichen CSS-Datei für die konkrete App-Instanz.",
+      "default": "",
+      "format": {
+        "typ": "url",
+        "laenge": 500
+      },
+      "erforderlich": "nein"
     }
+  },
+  "daten": {
+    "beschreibung": "Die Ladesäulen-App verarbeitet konfigurierbare Open-Data-Ressourcen aus dem Open Data Portal (z.B. JSON- oder CSV-Endpunkte).",
+    "schema": "assets/schema.json",
+    "beispiel": "",
+    "beispiel-url": ""
+  }
 }
