@@ -3,7 +3,7 @@
   "app-entwickler-name": "ondics-gmbh",
   "name-in-url": "ladesaeulen",
   "name": "Ladesäulen",
-  "app-version": "1.29.0",
+  "app-version": "1.29.1",
   "app-package-version": "2",
   "odas-app-icon": "assets/odas-app-icon.svg",
   "app-icon": "assets/odas-app-icon.svg",
@@ -388,7 +388,7 @@
   "daten": {
     "beschreibung": "Die Ladesäulen-App verarbeitet konfigurierbare Open-Data-Ressourcen aus dem Open Data Portal (z.B. JSON- oder CSV-Endpunkte).",
     "schema": "assets/schema.json",
-    "beispiel": "",
-    "beispiel-url": ""
+    "beispiel": "OpenDataSoft-Records-Antwort mit results[] und total_count (JSON).",
+    "beispiel-url": "https://opendata.rhein-kreis-neuss.de/api/explore/v2.1/catalog/datasets/rhein-kreis-neuss-ladesaulen-in-deutschland/records?limit=5"
   }
 }

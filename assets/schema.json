@@ -1,222 +1,249 @@
 {
   "$schema": "https://frictionlessdata.io/schemas/table-schema.json",
-  "name": "odas-app-ladesäulen",
+  "name": "odas-app-ladesaeulen",
   "title": "Ladesäulen",
   "fields": [
     {
       "name": "betreiber",
+      "title": "Betreiber",
       "type": "string",
-      "description": "Wird in der App verwendet",
+      "description": "Betreiber der Ladeeinrichtung.",
       "constraints": {
-        "required": true
+        "required": false
       }
     },
     {
       "name": "art_der_ladeeinrichung",
+      "title": "Art der Ladeeinrichtung",
       "type": "string",
-      "description": "Wird in der App verwendet",
+      "description": "Bauart, z. B. Normalladeeinrichtung oder Schnellladeeinrichtung.",
       "constraints": {
-        "required": true
+        "required": false
       }
     },
     {
       "name": "anzahl_ladepunkte",
-      "type": "string",
-      "description": "Wird in der App verwendet",
+      "title": "Anzahl Ladepunkte",
+      "type": "number",
+      "description": "Zahl der Ladepunkte an der Ladeeinrichtung.",
       "constraints": {
-        "required": true
+        "required": false
       }
     },
     {
       "name": "steckertypen1",
+      "title": "Steckertypen 1",
       "type": "string",
-      "description": "Wird in der App verwendet",
+      "description": "Steckertypen des ersten Ladepunkts, z. B. AC Typ 2, CCS oder CHAdeMO.",
       "constraints": {
-        "required": true
+        "required": false
       }
     },
     {
       "name": "steckertypen2",
+      "title": "Steckertypen 2",
       "type": "string",
-      "description": "Wird in der App verwendet",
+      "description": "Steckertypen des zweiten Ladepunkts.",
       "constraints": {
-        "required": true
+        "required": false
       }
     },
     {
       "name": "steckertypen3",
+      "title": "Steckertypen 3",
       "type": "string",
-      "description": "Wird in der App verwendet",
+      "description": "Steckertypen des dritten Ladepunkts.",
       "constraints": {
-        "required": true
+        "required": false
       }
     },
     {
       "name": "steckertypen4",
+      "title": "Steckertypen 4",
       "type": "string",
-      "description": "Wird in der App verwendet",
+      "description": "Steckertypen des vierten Ladepunkts.",
       "constraints": {
-        "required": true
+        "required": false
       }
     },
     {
       "name": "p1_kw",
-      "type": "string",
-      "description": "Wird in der App verwendet",
+      "title": "Leistung P1 (kW)",
+      "type": "number",
+      "description": "Einzelleistung des ersten Ladepunkts in Kilowatt.",
       "constraints": {
-        "required": true
+        "required": false
       }
     },
     {
       "name": "p2_kw",
-      "type": "string",
-      "description": "Wird in der App verwendet",
+      "title": "Leistung P2 (kW)",
+      "type": "number",
+      "description": "Einzelleistung des zweiten Ladepunkts in Kilowatt.",
       "constraints": {
-        "required": true
+        "required": false
       }
     },
     {
       "name": "p3_kw",
-      "type": "string",
-      "description": "Wird in der App verwendet",
+      "title": "Leistung P3 (kW)",
+      "type": "number",
+      "description": "Einzelleistung des dritten Ladepunkts in Kilowatt.",
       "constraints": {
-        "required": true
+        "required": false
       }
     },
     {
       "name": "p4_kw",
-      "type": "string",
-      "description": "Wird in der App verwendet",
+      "title": "Leistung P4 (kW)",
+      "type": "number",
+      "description": "Einzelleistung des vierten Ladepunkts in Kilowatt.",
       "constraints": {
-        "required": true
+        "required": false
       }
     },
     {
       "name": "nennleistung_ladeeinrichtung_kw",
-      "type": "string",
-      "description": "Wird in der App verwendet",
+      "title": "Nennleistung (kW)",
+      "type": "number",
+      "description": "Gesamtnennleistung der Ladeeinrichtung in Kilowatt.",
       "constraints": {
-        "required": true
+        "required": false
       }
     },
     {
       "name": "kreis_kreisfreie_stadt",
+      "title": "Kreis/kreisfreie Stadt",
       "type": "string",
-      "description": "Wird in der App verwendet",
+      "description": "Landkreis oder kreisfreie Stadt des Standorts.",
       "constraints": {
-        "required": true
+        "required": false
       }
     },
     {
       "name": "ort",
+      "title": "Ort",
       "type": "string",
-      "description": "Wird in der App verwendet",
+      "description": "Ort des Ladestandorts.",
       "constraints": {
-        "required": true
+        "required": false
       }
     },
     {
       "name": "postleitzahl",
+      "title": "Postleitzahl",
       "type": "string",
-      "description": "Wird in der App verwendet",
+      "description": "Postleitzahl des Standorts (als Text, führende Nullen bleiben erhalten).",
       "constraints": {
-        "required": true
+        "required": false
       }
     },
     {
       "name": "strasse",
+      "title": "Straße",
       "type": "string",
-      "description": "Wird in der App verwendet",
+      "description": "Straße des Ladestandorts.",
       "constraints": {
-        "required": true
+        "required": false
       }
     },
     {
       "name": "hausnummer",
+      "title": "Hausnummer",
       "type": "string",
-      "description": "Wird in der App verwendet",
+      "description": "Hausnummer des Ladestandorts.",
       "constraints": {
-        "required": true
+        "required": false
       }
     },
     {
       "name": "adresszusatz",
+      "title": "Adresszusatz",
       "type": "string",
-      "description": "Wird in der App verwendet",
+      "description": "Zusätzliche Adressangabe, falls vorhanden.",
       "constraints": {
-        "required": true
+        "required": false
       }
     },
     {
       "name": "inbetriebnahmedatum",
+      "title": "Inbetriebnahmedatum",
       "type": "string",
-      "description": "Wird in der App verwendet",
+      "description": "Datum der Inbetriebnahme, falls gemeldet.",
       "constraints": {
-        "required": true
+        "required": false
       }
     },
     {
       "name": "koordinaten",
-      "type": "string",
-      "description": "Wird in der App verwendet",
+      "title": "Koordinaten",
+      "type": "object",
+      "description": "Standortkoordinaten als Objekt mit lon/lat (ggf. weiteren Schlüsselvarianten, die die App normalisiert).",
       "constraints": {
-        "required": true
+        "required": false
       }
     },
     {
       "name": "anzeigename_karte",
+      "title": "Anzeigename Karte",
       "type": "string",
-      "description": "Wird in der App verwendet",
+      "description": "Anzeigename für die Kartendarstellung, falls gepflegt.",
       "constraints": {
-        "required": true
+        "required": false
       }
     },
     {
       "name": "steckertypen5",
+      "title": "Steckertypen 5",
       "type": "string",
-      "description": "Wird in der App verwendet",
+      "description": "Steckertypen des fünften Ladepunkts.",
       "constraints": {
-        "required": true
+        "required": false
       }
     },
     {
       "name": "p5_kw",
-      "type": "string",
-      "description": "Wird in der App verwendet",
+      "title": "Leistung P5 (kW)",
+      "type": "number",
+      "description": "Einzelleistung des fünften Ladepunkts in Kilowatt.",
       "constraints": {
-        "required": true
+        "required": false
       }
     },
     {
       "name": "public_key5",
+      "title": "Public Key 5",
       "type": "string",
-      "description": "Wird in der App verwendet",
+      "description": "Öffentlicher Schlüssel des fünften Ladepunkts, falls gemeldet.",
       "constraints": {
-        "required": true
+        "required": false
       }
     },
     {
       "name": "steckertypen6",
+      "title": "Steckertypen 6",
       "type": "string",
-      "description": "Wird in der App verwendet",
+      "description": "Steckertypen des sechsten Ladepunkts.",
       "constraints": {
-        "required": true
+        "required": false
       }
     },
     {
       "name": "p6_kw",
-      "type": "string",
-      "description": "Wird in der App verwendet",
+      "title": "Leistung P6 (kW)",
+      "type": "number",
+      "description": "Einzelleistung des sechsten Ladepunkts in Kilowatt.",
       "constraints": {
-        "required": true
+        "required": false
       }
     },
     {
       "name": "public_key6",
+      "title": "Public Key 6",
       "type": "string",
-      "description": "Wird in der App verwendet",
+      "description": "Öffentlicher Schlüssel des sechsten Ladepunkts, falls gemeldet.",
       "constraints": {
-        "required": true
+        "required": false
       }
     }
   ]
