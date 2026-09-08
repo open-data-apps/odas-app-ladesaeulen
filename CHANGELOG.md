@@ -1,7 +1,9 @@
 # Changelog
 
-## 1.29.1 - 2026-09-07
+## 1.29.2 - 2026-09-08
 - **FIX:** Variante-A-Verdrahtung (F-92): Typprüfung (ods21) vor dem ersten Fetch; Quellen- und Ladefehler über `renderOdasFehler` (1.29.1 -> 1.29.2).
+
+## 1.29.1 - 2026-09-07
 - **FIX:** Frictionless-Härtung: `assets/schema.json` mit Titeln, echten Typen (`number`/`object`) und Fachbeschreibungen; `daten.beispiel`/`beispiel-url` befüllt. Records-Default bleibt (4B-Präzedenz): ODS-Hülle ist per Store-Validator nicht grün validierbar (`missing data table`), dokumentierte Ausnahme.
 
 ## 1.29.0 - 2026-08-25
