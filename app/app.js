@@ -357,10 +357,28 @@ function app(configdata = {}, enclosingHtmlDivElement) {
   ladesaeulenInstances.set(enclosingHtmlDivElement, state);
 
   if (!isValidApiUrl(BASE_URL)) {
-    enclosingHtmlDivElement.innerHTML = `
-      <div class="alert alert-info" role="alert">
-        Es ist keine Datenquelle konfiguriert.
-      </div>`;
+    renderOdasFehler(
+      enclosingHtmlDivElement,
+      new Error("Keine Datenquelle konfiguriert."),
+      {
+        url: BASE_URL,
+        label: "Ladesäulen-API",
+        typLabel: "Open-Data-Suche (API v2.1)",
+        erwarteterTyp: "ods21",
+      },
+    );
+    return null;
+  }
+
+  // Variante A (F-92): Typprüfung vor dem ersten Fetch.
+  const lsTypWarn = validateUrlTypErwartung(BASE_URL, "ods21");
+  if (lsTypWarn) {
+    renderOdasFehler(enclosingHtmlDivElement, new Error(lsTypWarn), {
+      url: BASE_URL,
+      label: "Ladesäulen-API",
+      typLabel: "Open-Data-Suche (API v2.1)",
+      erwarteterTyp: "ods21",
+    });
     return null;
   }
 
@@ -1250,10 +1268,12 @@ function initMap(root, BASE_URL, configdata, uid, state) {
       .catch((err) => {
         // F-44: Fehler eines überholten Abrufs nicht mehr anzeigen
         if (token !== state.fetchToken) return;
-        listEl.innerHTML = `
-          <div class="alert alert-danger">
-            <strong>Fehler beim Laden der Daten:</strong> ${escapeHtml(err.message)}
-          </div>`;
+        renderOdasFehler(listEl, err, {
+          url: BASE_URL,
+          label: "Ladesäulen-API",
+          typLabel: "Open-Data-Suche (API v2.1)",
+          erwarteterTyp: "ods21",
+        });
         updateBadge(0);
       });
   }
