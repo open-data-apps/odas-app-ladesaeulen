@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.29.3 - 2026-09-10
+- **FIX:** Same-Page-Re-Render räumt Vorgänger-Instanz ab (LS-B1, extrahierter `teardownLadesaeulenInstanz` für Hook + Re-Render).
+- **FIX:** Typ-Gate lässt CKAN-Tabellen zu (LS-B2, `erwarteteTypen`); vorhandener CKAN-Pfad war sonst unerreichbar.
+- **FIX:** Vendor-Ladefehler mit `onerror` + Fehlerrender statt ewigem Laden (LS-B3); toter Code (`isLeerErgebnis`) entfernt, `addToHead` gibt `""` zurück (LS-B5).
+- **FIX:** Methodik/Weiteres stehen statisch im App-Template statt pro Suche neu (LS-B4, Boxen bleiben offen).
+- **ROBUST:** Ausreißer-Geocoding parallel/begrenzt (25) mit 8-s-Timeout, Entfernte gezählt (F-73); Datenstand pro Dataset gecacht; alle `ls-*`-IDs instanz-scoped.
+- **FEATURE:** Nähe-Suche (Geolocation → Photon-Reverse → PLZ/Ort, nur auf Klick; Offenlegung in Beschreibung ergänzt); CSV-Export der Stationen (BOM).
+
 ## 1.29.2 - 2026-09-08
 - **FIX:** Variante-A-Verdrahtung (F-92): Typprüfung (ods21) vor dem ersten Fetch; Quellen- und Ladefehler über `renderOdasFehler` (1.29.1 -> 1.29.2).
 

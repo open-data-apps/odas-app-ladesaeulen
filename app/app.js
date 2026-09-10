@@ -24,35 +24,44 @@ let lsInstanzZaehler = 0;
 // zur App passende Muster (Portfolio-Muster aus Task 9.1).
 const ladesaeulenInstances = new Map();
 
+// LS-B1: Teardown als Funktion, damit ihn neben onPageLeave auch ein
+// Same-Page-Re-Render für die VORGÄNGER-Instanz laufen lassen kann (sonst
+// leaken alte Karte + Dokument-Listener bei jedem Re-Render).
+function teardownLadesaeulenInstanz(state, container) {
+  state.disposed = true;
+  state.fetchToken += 1; // F-44: laufende Abrufe invalidieren
+  state.acToken += 1; // F-44: laufende Autocomplete-Timer invalidieren
+  (state.listeners || []).forEach(([el, type, fn, capture]) => {
+    el.removeEventListener(type, fn, capture);
+  });
+  state.listeners = [];
+  if (state.acDebounce) {
+    clearTimeout(state.acDebounce);
+    state.acDebounce = null;
+  }
+  if (state.resizeTimeout) {
+    clearTimeout(state.resizeTimeout);
+    state.resizeTimeout = null;
+  }
+  if (state.suggestionsEl && state.suggestionsEl.parentNode) {
+    state.suggestionsEl.parentNode.removeChild(state.suggestionsEl);
+  }
+  if (state.map) {
+    try {
+      state.map.remove();
+    } catch (error) {
+      console.warn("Fehler beim Entfernen der Leaflet-Karte:", error);
+    }
+    state.map = null;
+  }
+  ladesaeulenInstances.delete(container);
+}
+
 function onPageLeave(page) {
-  ladesaeulenInstances.forEach((state, container) => {
-    state.disposed = true;
-    state.fetchToken += 1; // F-44: laufende Abrufe invalidieren
-    state.acToken += 1; // F-44: laufende Autocomplete-Timer invalidieren
-    (state.listeners || []).forEach(([el, type, fn, capture]) => {
-      el.removeEventListener(type, fn, capture);
-    });
-    state.listeners = [];
-    if (state.acDebounce) {
-      clearTimeout(state.acDebounce);
-      state.acDebounce = null;
-    }
-    if (state.resizeTimeout) {
-      clearTimeout(state.resizeTimeout);
-      state.resizeTimeout = null;
-    }
-    if (state.suggestionsEl && state.suggestionsEl.parentNode) {
-      state.suggestionsEl.parentNode.removeChild(state.suggestionsEl);
-    }
-    if (state.map) {
-      try {
-        state.map.remove();
-      } catch (error) {
-        console.warn("Fehler beim Entfernen der Leaflet-Karte:", error);
-      }
-      state.map = null;
-    }
-    ladesaeulenInstances.delete(container);
+  [...ladesaeulenInstances.entries()].forEach(([container, state]) => {
+    try {
+      teardownLadesaeulenInstanz(state, container);
+    } catch (_e) {}
   });
 }
 
@@ -314,7 +323,15 @@ function classifyOdasFehler(error, kontext = {}) {
 
 function renderOdasFehler(container, error, kontext = {}) {
   if (!container) return;
-  const typWarn = validateUrlTypErwartung(kontext.url, kontext.erwarteterTyp);
+  // Mehrere akzeptierte URL-Typen: erst warnen, wenn kein einziger passt.
+  const typen = Array.isArray(kontext.erwarteteTypen) && kontext.erwarteteTypen.length
+    ? kontext.erwarteteTypen
+    : [kontext.erwarteterTyp];
+  let typWarn = null;
+  for (const t of typen) {
+    typWarn = validateUrlTypErwartung(kontext.url, t);
+    if (!typWarn) break;
+  }
   if (typWarn && !/Typ passt nicht/i.test(String(error && error.message))) {
     error = new Error(typWarn);
   }
@@ -325,16 +342,6 @@ function renderOdasFehler(container, error, kontext = {}) {
   const alertClass = kontext.leer ? "alert-info" : info.alertClass;
   container.innerHTML = `<div class="alert ${alertClass}" role="alert"><strong>${escapeHtml(titel)}</strong><p class="mb-1">${escapeHtml(info.hinweis)}</p>${urlZeile}<details class="small"><summary>Details</summary><code>${escapeHtml(info.detail || String(error))}</code></details></div>`;
 }
-
-function isLeerErgebnis(json) {
-  if (!json) return true;
-  if (Array.isArray(json) && json.length === 0) return true;
-  if (Array.isArray(json.records) && json.records.length === 0) return true;
-  if (Array.isArray(json.results) && json.results.length === 0) return true;
-  if (json.result && Array.isArray(json.result.records) && json.result.records.length === 0) return true;
-  return false;
-}
-
 
 function app(configdata = {}, enclosingHtmlDivElement) {
   const lsUid = "i" + ++lsInstanzZaehler;
@@ -354,68 +361,75 @@ function app(configdata = {}, enclosingHtmlDivElement) {
     resizeTimeout: null,
   };
   state.disposed = false; // wird in Task 9 (onPageLeave) gesetzt
+  const lsVorinstanz = ladesaeulenInstances.get(enclosingHtmlDivElement);
+  if (lsVorinstanz) {
+    try {
+      teardownLadesaeulenInstanz(lsVorinstanz, enclosingHtmlDivElement);
+    } catch (_e) {}
+  }
   ladesaeulenInstances.set(enclosingHtmlDivElement, state);
 
+  const lsKontext = {
+    url: BASE_URL,
+    label: "Ladesäulen-API",
+    typLabel: "Open-Data-Suche (API v2.1)",
+    erwarteteTypen: ["ods21", "ckan-dkan-ds"],
+  };
   if (!isValidApiUrl(BASE_URL)) {
     renderOdasFehler(
       enclosingHtmlDivElement,
       new Error("Keine Datenquelle konfiguriert."),
-      {
-        url: BASE_URL,
-        label: "Ladesäulen-API",
-        typLabel: "Open-Data-Suche (API v2.1)",
-        erwarteterTyp: "ods21",
-      },
+      lsKontext,
     );
     return null;
   }
 
-  // Variante A (F-92): Typprüfung vor dem ersten Fetch.
-  const lsTypWarn = validateUrlTypErwartung(BASE_URL, "ods21");
+  // Variante A (F-92): Typprüfung vor dem ersten Fetch. LS-B2: neben der
+  // ODS-Suche sind CKAN-Tabellen zulässig (detectApiType + fetchAllPagesCkan
+  // existieren längst, waren aber unerreichbar).
+  const lsOdsWarn = validateUrlTypErwartung(BASE_URL, "ods21");
+  const lsTypWarn = lsOdsWarn && validateUrlTypErwartung(BASE_URL, "ckan-dkan-ds") ? lsOdsWarn : null;
   if (lsTypWarn) {
-    renderOdasFehler(enclosingHtmlDivElement, new Error(lsTypWarn), {
-      url: BASE_URL,
-      label: "Ladesäulen-API",
-      typLabel: "Open-Data-Suche (API v2.1)",
-      erwarteterTyp: "ods21",
-    });
+    renderOdasFehler(enclosingHtmlDivElement, new Error(lsTypWarn), lsKontext);
     return null;
   }
 
   enclosingHtmlDivElement.innerHTML = `
     <div class="card mb-3 border-0 shadow-sm">
       <div class="card-body py-3">
-        <div class="text-end mb-1"><small id="ls-datenstand" class="text-muted"></small></div>
+        <div class="text-end mb-1"><small id="ls-datenstand-${lsUid}" class="text-muted"></small></div>
         <div class="row g-2 align-items-start">
           <div class="col-12 col-md-7">
             <label class="form-label fw-semibold mb-1">🔍 Stadt oder PLZ</label>
             <div class="input-group has-validation">
-              <input type="text" id="ort-input" class="form-control"
+              <input type="text" id="ort-input-${lsUid}" class="form-control"
                 placeholder="z. B. Frankfurt oder 60311"
-                autocomplete="off" />
-              <button class="btn btn-success" id="suche-btn">Suchen</button>
+                autocomplete="off" aria-label="Stadt oder PLZ" />
+              <button class="btn btn-success" id="suche-btn-${lsUid}">Suchen</button>
+              <button class="btn btn-outline-success" id="ls-btn-nah-${lsUid}" type="button" title="Ladesäulen in der Nähe suchen">📍</button>
               <div class="invalid-feedback">Bitte Stadt oder PLZ eingeben.</div>
             </div>
           </div>
           <div class="col-12 col-md-5">
             <label class="form-label fw-semibold mb-1">🔌 Steckertyp</label>
             <div class="d-flex gap-2 align-items-center">
-              <select id="filter-stecker" class="form-select">
+              <select id="filter-stecker-${lsUid}" class="form-select">
                 <option value="">Alle</option>
                 <option value="CCS">CCS (DC Combo)</option>
                 <option value="CHAdeMO">CHAdeMO</option>
                 <option value="AC Typ 2">AC Typ 2</option>
                 <option value="AC Schuko">AC Schuko</option>
               </select>
-              <div id="treffer-badge" class="text-nowrap"></div>
+              <div id="treffer-badge-${lsUid}" class="text-nowrap"></div>
+              <button id="ls-btn-export-${lsUid}" type="button" class="btn btn-sm btn-outline-secondary" title="Geladene Stationen als CSV laden">CSV</button>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <div id="ls-ladestation-map" style="height: 500px; border-radius: 10px; overflow: hidden; z-index:0; position:relative;">
-      <button id="fullscreen-btn" title="Vollbild"
+    <div id="ls-ladestation-map-${lsUid}" style="height: 500px; border-radius: 10px; overflow: hidden; z-index:0; position:relative;">
+      <button id="fullscreen-btn-${lsUid}" title="Vollbild"
         style="position:absolute;top:10px;right:10px;z-index:1000;
                background:#fff;border:2px solid rgba(0,0,0,.3);border-radius:6px;
                width:34px;height:34px;cursor:pointer;font-size:16px;line-height:1;
@@ -424,21 +438,29 @@ function app(configdata = {}, enclosingHtmlDivElement) {
       </button>
     </div>
 
-    <div id="ladestation-list" class="mt-4">
+    <div id="ladestation-list-${lsUid}" class="mt-4">
       <div class="text-center py-5 text-muted">
         <div style="font-size:2.5rem;">⚡</div>
         <p class="mt-2">Gib eine Stadt oder PLZ ein und klicke auf <strong>Suchen</strong>.</p>
       </div>
     </div>
+
+    ${renderWeitereInfos(configdata)}${renderMethodikbox(configdata, lsUid)}
   `;
 
-  loadLeaflet().then(() => initMap(enclosingHtmlDivElement, BASE_URL, configdata, lsUid, state));
+  loadLeaflet().then(() => {
+    if (state.disposed) return;
+    initMap(enclosingHtmlDivElement, BASE_URL, configdata, lsUid, state);
+  }).catch((err) => {
+    if (state.disposed) return;
+    renderOdasFehler(enclosingHtmlDivElement, err, lsKontext);
+  });
   return null;
 }
 
 /* ── Leaflet dynamisch laden ── */
 function loadLeaflet() {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     if (!document.getElementById("leaflet-css")) {
       const link = document.createElement("link");
       link.id = "leaflet-css";
@@ -460,8 +482,9 @@ function loadLeaflet() {
         "vendor/markercluster/MarkerCluster.Default.css";
       document.head.appendChild(link2);
     }
+    // LS-B3: ohne onerror hängt ein fehlendes Vendor-File die Kette für immer.
     function loadScript(src, id) {
-      return new Promise((res) => {
+      return new Promise((res, rej) => {
         if (document.getElementById(id)) {
           res();
           return;
@@ -470,6 +493,7 @@ function loadLeaflet() {
         s.id = id;
         s.src = src;
         s.onload = res;
+        s.onerror = () => rej(new Error("Bibliothek konnte nicht geladen werden: " + src));
         document.head.appendChild(s);
       });
     }
@@ -487,15 +511,14 @@ function loadLeaflet() {
           "leaflet-cluster-js",
         ),
       )
-      .then(resolve)
-      .catch(() => console.error("Leaflet konnte nicht geladen werden."));
+      .then(resolve, reject);
   });
 }
 
 /* ── Karte und Logik initialisieren ── */
 function initMap(root, BASE_URL, configdata, uid, state) {
   if (state.disposed) return;
-  const map = L.map(root.querySelector("#ls-ladestation-map")).setView([51.165, 10.451], 6);
+  const map = L.map(root.querySelector("#ls-ladestation-map-" + lsUid)).setView([51.165, 10.451], 6);
   state.map = map;
 
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -525,6 +548,8 @@ function initMap(root, BASE_URL, configdata, uid, state) {
   }).addTo(map);
   let alleStationen = [];
   let alleStationenRaw = []; // ungefiltert, für clientseitigen Stecker-Filter
+  let geoEntferntAnzahl = 0; // Ausreißer-Jenseits-Limit/unkorrigierbar (F-73)
+  const datenstandCache = {}; // datasetId -> Datenstand (ein Meta-Call genügt)
   let geladenerOrt = null; // Anzeigewert im Input (Ortsname)
   let geladenerSuchWert = null; // tatsächlich verwendeter API-Suchwert (PLZ oder Ort)
   let markers = [];
@@ -753,6 +778,18 @@ function initMap(root, BASE_URL, configdata, uid, state) {
     return 30; // Metropole (Berlin, Hamburg)
   }
 
+  // Fetch mit Timeout — hängende Requests dürfen weder Suche noch
+  // Geocoding ewig blockieren.
+  async function fetchMitTimeout(url, millis) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), millis);
+    try {
+      return await fetch(url, { signal: controller.signal });
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
   /* ── Photon-Geocoding für eine Station ── */
   async function geocodeStation(s) {
     const teile = [
@@ -763,8 +800,9 @@ function initMap(root, BASE_URL, configdata, uid, state) {
     ].filter(Boolean);
     const q = encodeURIComponent(teile.join(", "));
     try {
-      const res = await fetch(
+      const res = await fetchMitTimeout(
         `https://photon.komoot.io/api/?q=${q}&limit=1&lang=de`,
+        8000,
       );
       if (!res.ok) return null;
       const data = await res.json();
@@ -776,6 +814,10 @@ function initMap(root, BASE_URL, configdata, uid, state) {
       return null;
     }
   }
+
+  // Ausreißer-Geocoding ist auf die ersten 25 begrenzt — sonst stallt eine
+  // Großstadt-Suche an N×RTT. Entfernte Treffer werden gezählt (F-73).
+  const LS_MAX_GEOCODE = 25;
 
   /* ── Geografische Ausreißer erkennen und per Geocoding korrigieren ── */
   async function fixOutliers(stationen) {
@@ -789,22 +831,31 @@ function initMap(root, BASE_URL, configdata, uid, state) {
     const maxKm = dynamicRadius(stationen.length);
 
     const result = [];
+    const ausreisser = [];
     for (const s of stationen) {
       const c = getCoord(s);
       if (!c) continue;
-      const dist = haversine(c.lat, c.lon, medLat, medLon);
-      if (dist <= maxKm) {
+      if (haversine(c.lat, c.lon, medLat, medLon) <= maxKm) {
         result.push(s);
       } else {
-        // Ausreißer → Adresse geocoden
-        const fixed = await geocodeStation(s);
-        if (fixed && haversine(fixed.lat, fixed.lon, medLat, medLon) <= maxKm) {
-          // Korrigierte Koordinaten in eine Kopie schreiben
-          result.push({ ...s, koordinaten: fixed });
-        }
-        // sonst: Station weglassen
+        ausreisser.push(s);
       }
     }
+    // Jenseits des Limits: weglassen und zählen (statt still zu verwerfen).
+    geoEntferntAnzahl += Math.max(0, ausreisser.length - LS_MAX_GEOCODE);
+    const fixes = await Promise.all(
+      ausreisser.slice(0, LS_MAX_GEOCODE).map((s) => geocodeStation(s)),
+    );
+    ausreisser.slice(0, LS_MAX_GEOCODE).forEach((s, i) => {
+      const fixed = fixes[i];
+      if (fixed && haversine(fixed.lat, fixed.lon, medLat, medLon) <= maxKm) {
+        // Korrigierte Koordinaten in eine Kopie schreiben
+        result.push({ ...s, koordinaten: fixed });
+      } else {
+        // Nicht korrigierbar: weglassen und zählen.
+        geoEntferntAnzahl += 1;
+      }
+    });
     return result;
   }
 
@@ -875,7 +926,7 @@ function initMap(root, BASE_URL, configdata, uid, state) {
 
   /* ── Tabelle rendern ── */
   function renderListe(stationen) {
-    const listEl = root.querySelector("#ladestation-list");
+    const listEl = root.querySelector("#ladestation-list-" + lsUid);
     if (stationen.length === 0) {
       listEl.innerHTML = `<div class="alert alert-info" role="alert">Keine Ladestationen gefunden.</div>`;
       return;
@@ -985,7 +1036,7 @@ function initMap(root, BASE_URL, configdata, uid, state) {
           map.setView([lat, lon], 17);
           markers[idx]?.marker.openPopup();
           root
-            .querySelector("#ls-ladestation-map")
+            .querySelector("#ls-ladestation-map-" + lsUid)
             .scrollIntoView({ behavior: "smooth", block: "center" });
         });
       });
@@ -1020,14 +1071,21 @@ function initMap(root, BASE_URL, configdata, uid, state) {
       </div>
 
       ${
-        ohneKoordinatenAnzahl > 0
-          ? `<div class="alert alert-info" role="alert">
-              ${ohneKoordinatenAnzahl} von ${stationen.length} Ladestationen konnten mangels gültiger Koordinaten nicht auf der Karte angezeigt werden (weiterhin in der Tabelle sichtbar).
-            </div>`
+        ohneKoordinatenAnzahl > 0 || geoEntferntAnzahl > 0
+          ? `<div class="alert alert-info" role="alert">${
+              ohneKoordinatenAnzahl > 0
+                ? `${ohneKoordinatenAnzahl} von ${stationen.length} Ladestationen konnten mangels gültiger Koordinaten nicht auf der Karte angezeigt werden (weiterhin in der Tabelle sichtbar).`
+                : ""
+            }${
+              geoEntferntAnzahl > 0
+                ? ` ${geoEntferntAnzahl} Treffer lagen zu weit außerhalb des Suchraums und wurden weggelassen.`
+                : ""
+            }</div>`
           : ""
       }
 
       <h6 class="mb-2 fw-semibold">Alle Ladesäulen</h6>
+      <div class="text-muted small mb-2">Tipp: Klick auf eine Zeile zentriert die Karte. <span class="d-none d-md-inline">Sortierung über die Spaltenköpfe.</span></div>
       <div class="table-responsive w-100">
         <table class="table table-hover table-sm align-middle w-100">
           <colgroup>
@@ -1039,14 +1097,14 @@ function initMap(root, BASE_URL, configdata, uid, state) {
             <col style="width:30%">
           </colgroup>
           <thead class="table-dark">
-            <tr id="sort-header">${headerHtml()}</tr>
+            <tr id="sort-header-${lsUid}">${headerHtml()}</tr>
           </thead>
-          <tbody id="ladestation-tbody"></tbody>
+          <tbody id="ladestation-tbody-${lsUid}"></tbody>
         </table>
       </div>
-      ${renderWeitereInfos(configdata)}${renderMethodikbox(configdata, uid)}`;
+`;
 
-    const tbody = listEl.querySelector("#ladestation-tbody");
+    const tbody = listEl.querySelector("#ladestation-tbody-" + lsUid);
     renderTbody();
 
     // Sortier-Klick auf Header
@@ -1070,7 +1128,7 @@ function initMap(root, BASE_URL, configdata, uid, state) {
 
   /* ── Treffer-Badge aktualisieren ── */
   function updateBadge(gefunden) {
-    const badge = root.querySelector("#treffer-badge");
+    const badge = root.querySelector("#treffer-badge-" + lsUid);
     if (!badge) return;
     if (gefunden === null) {
       badge.innerHTML = "";
@@ -1109,7 +1167,7 @@ function initMap(root, BASE_URL, configdata, uid, state) {
     const token = ++state.fetchToken;
     // displayWert = was im Input steht (Ortsname); suchWert = was an die API geht (PLZ oder Ort)
     const ortDisplay = displayWert ?? suchWert;
-    const listEl = root.querySelector("#ladestation-list");
+    const listEl = root.querySelector("#ladestation-list-" + lsUid);
     listEl.innerHTML = `
       <div class="text-center py-5 text-muted">
         <div class="spinner-border text-success mb-3" role="status"></div>
@@ -1118,6 +1176,7 @@ function initMap(root, BASE_URL, configdata, uid, state) {
     markerGroup.clearLayers();
     markers = [];
     alleStationenRaw = [];
+    geoEntferntAnzahl = 0;
     geladenerOrt = null;
     updateBadge(null);
 
@@ -1139,16 +1198,22 @@ function initMap(root, BASE_URL, configdata, uid, state) {
     async function fetchAllPagesOds() {
       var datasetId = BASE_URL.split("/catalog/datasets/")[1]?.split("/")[0] || "";
       if (datasetId) {
-        var catUrl = BASE_URL.substring(0, BASE_URL.indexOf("/catalog/datasets/")) + "/catalog/datasets/" + datasetId;
-        fetchOdasJson(catUrl, configdata).then(function(meta) {
-          // F-44: nur der aktuelle Abruf darf den Datenstand schreiben
-          if (token !== state.fetchToken) return;
-          var stand = extractDatenStand(meta);
-          if (stand) {
-            var badge = root.querySelector("#ls-datenstand");
-            if (badge) badge.textContent = "Aktualisiert: " + stand;
-          }
-        }).catch(function() {});
+        if (datenstandCache[datasetId]) {
+          var badge0 = root.querySelector("#ls-datenstand-" + lsUid);
+          if (badge0) badge0.textContent = "Aktualisiert: " + datenstandCache[datasetId];
+        } else {
+          var catUrl = BASE_URL.substring(0, BASE_URL.indexOf("/catalog/datasets/")) + "/catalog/datasets/" + datasetId;
+          fetchOdasJson(catUrl, configdata).then(function(meta) {
+            // F-44: nur der aktuelle Abruf darf den Datenstand schreiben
+            if (token !== state.fetchToken) return;
+            var stand = extractDatenStand(meta);
+            if (stand) {
+              datenstandCache[datasetId] = stand;
+              var badge = root.querySelector("#ls-datenstand-" + lsUid);
+              if (badge) badge.textContent = "Aktualisiert: " + stand;
+            }
+          }).catch(function() {});
+        }
       }
 
       const PAGE_SIZE = 100;
@@ -1263,7 +1328,7 @@ function initMap(root, BASE_URL, configdata, uid, state) {
         if (state.disposed) return;
         geladenerOrt = ortDisplay;
         geladenerSuchWert = suchWert;
-        applySteckerFilter(root.querySelector("#filter-stecker").value);
+        applySteckerFilter(root.querySelector("#filter-stecker-" + lsUid).value);
       })
       .catch((err) => {
         // F-44: Fehler eines überholten Abrufs nicht mehr anzeigen
@@ -1272,16 +1337,16 @@ function initMap(root, BASE_URL, configdata, uid, state) {
           url: BASE_URL,
           label: "Ladesäulen-API",
           typLabel: "Open-Data-Suche (API v2.1)",
-          erwarteterTyp: "ods21",
+          erwarteteTypen: ["ods21", "ckan-dkan-ds"],
         });
         updateBadge(0);
       });
   }
 
   /* ── Event-Handler ── */
-  const sucheBtn = root.querySelector("#suche-btn");
-  const ortInput = root.querySelector("#ort-input");
-  const filterStecker = root.querySelector("#filter-stecker");
+  const sucheBtn = root.querySelector("#suche-btn-" + lsUid);
+  const ortInput = root.querySelector("#ort-input-" + lsUid);
+  const filterStecker = root.querySelector("#filter-stecker-" + lsUid);
 
   function triggerSuche() {
     const ort = ortInput.value.trim();
@@ -1295,8 +1360,8 @@ function initMap(root, BASE_URL, configdata, uid, state) {
   }
 
   /* ── Vollbild-Toggle ── */
-  const mapEl = root.querySelector("#ls-ladestation-map");
-  const fsBtn = root.querySelector("#fullscreen-btn");
+  const mapEl = root.querySelector("#ls-ladestation-map-" + lsUid);
+  const fsBtn = root.querySelector("#fullscreen-btn-" + lsUid);
   let isFullscreen = false;
 
   // Styles für Vollbild-Modus
@@ -1341,6 +1406,101 @@ function initMap(root, BASE_URL, configdata, uid, state) {
   state.listeners.push([document, "keydown", escapeListener, false]);
 
   sucheBtn.addEventListener("click", triggerSuche);
+
+  /* ── Nähe-Suche: eigener Standort → Photon-Reverse → PLZ/Ort ── */
+  const nahBtn = root.querySelector("#ls-btn-nah-" + lsUid);
+  const zeigeNahStatus = (text) => {
+    const badge = root.querySelector("#treffer-badge-" + lsUid);
+    if (badge) badge.innerHTML = `<span class="badge bg-warning fs-6">${escapeHtml(text)}</span>`;
+  };
+  if (nahBtn) {
+    nahBtn.addEventListener("click", () => {
+      if (state.disposed) return;
+      if (!navigator.geolocation) {
+        zeigeNahStatus("Standort nicht unterstützt");
+        return;
+      }
+      nahBtn.disabled = true;
+      const fertig = () => {
+        nahBtn.disabled = false;
+      };
+      navigator.geolocation.getCurrentPosition(
+        async (pos) => {
+          if (state.disposed) {
+            fertig();
+            return;
+          }
+          try {
+            const rev = await fetchMitTimeout(
+              `https://photon.komoot.io/reverse?lat=${pos.coords.latitude}&lon=${pos.coords.longitude}&lang=de`,
+              8000,
+            );
+            if (state.disposed) {
+              fertig();
+              return;
+            }
+            const data = await rev.json();
+            const props = (data.features && data.features[0] && data.features[0].properties) || {};
+            const plz = props.postcode || "";
+            const ort = props.city || props.town || props.village || props.name || "";
+            const suchWert = plz || ort;
+            if (!suchWert) throw new Error("kein Ort gefunden");
+            ortInput.value = ort || plz;
+            ortInput.classList.remove("is-invalid");
+            fertig();
+            fetchStationen(suchWert, ort || plz);
+          } catch {
+            fertig();
+            if (state.disposed) return;
+            zeigeNahStatus("Standort nicht bestimmbar");
+          }
+        },
+        (fehler) => {
+          fertig();
+          if (state.disposed) return;
+          zeigeNahStatus(
+            fehler && fehler.code === 1 ? "Standortzugriff verweigert" : "Standort nicht bestimmbar",
+          );
+        },
+        { timeout: 10000 },
+      );
+    });
+  }
+
+  /* ── CSV-Export der geladenen Stationen ── */
+  const expBtn = root.querySelector("#ls-btn-export-" + lsUid);
+  if (expBtn) {
+    expBtn.addEventListener("click", () => {
+      if (state.disposed || alleStationen.length === 0) return;
+      const esc = (v) => {
+        const s = String(v ?? "");
+        return /[";\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+      };
+      const zeilen = ["Betreiber;Strasse;Hausnummer;PLZ;Ort;Typ;Ladepunkte;Leistung kW;Stecker;Breite;Laenge"];
+      alleStationen.forEach((s) => {
+        const c = getCoord(s);
+        zeilen.push(
+          [
+            s.betreiber, s.strasse, s.hausnummer, s.postleitzahl, s.ort,
+            istSchnell(s) ? "Schnell" : "Normal", s.anzahl_ladepunkte ?? "",
+            s.nennleistung_ladeeinrichtung_kw ?? "", getSteckerText(s),
+            c ? c.lat : "", c ? c.lon : "",
+          ]
+            .map(esc)
+            .join(";"),
+        );
+      });
+      const blob = new Blob(["\uFEFF" + zeilen.join("\r\n")], { type: "text/csv;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "ladesaeulen-export.csv";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    });
+  }
 
   /* ── Autocomplete ── */
   // Suggestions-Liste in den App-Root hängen (nicht document.body), damit sie
@@ -1527,7 +1687,9 @@ function initMap(root, BASE_URL, configdata, uid, state) {
 /*
  * addToHead – nicht benötigt, Leaflet wird dynamisch in loadLeaflet() geladen.
  */
-function addToHead() {}
+function addToHead() {
+  return ``;
+}
 
 function escapeHtml(s) {
   return String(s == null ? "" : s)

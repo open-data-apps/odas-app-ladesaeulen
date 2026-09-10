@@ -23,12 +23,15 @@ Mit Schale 4 Verständlichkeits-Komponenten (Datenfrische-Indikator, weiterführ
 Single Page Application mit Logo, Menü, Impressum/Datenschutz/Kontakt-Seiten und Fußzeile. Die Konfiguration wird vom ODAS geladen. Inhalte:
 
 - **Suche** nach Stadt oder PLZ mit Autocomplete (Photon/Komoot-Geocoding)
+- **Nähe-Suche**: Eigener Standort per Photon-Reverse-Geocoding — nur auf Klick, ohne Klick keine Standortübertragung
+- **CSV-Export** der geladenen Stationen (Excel-kompatibel mit BOM)
 - **Steckertyp-Filter**: CCS (DC Combo), CHAdeMO, AC Typ 2, AC Schuko – clientseitig ohne erneute API-Anfrage
 - **Interaktive Karte**: Leaflet.js/OpenStreetMap mit Marker-Clustering, farbkodierten Icons (Schnell-/Normallader), Vollbild-Modus
 - **Popup-Details** je Station: Betreiber, Adresse, Typ, Ladepunkte, Leistung, Stecker, Inbetriebnahmedatum, Google-Maps-Link
 - **Kennzahlen**: Anzahl Ladesäulen, Gesamtzahl Ladepunkte, maximale Leistung
 - **Sortierbare Tabelle**: Klick auf Tabellenzeile zentriert die Karte auf die Station
-- **Koordinaten-Korrektur**: Geografische Ausreißer werden per Photon-Geocoding nachgeodet
+- **Koordinaten-Korrektur**: Geografische Ausreißer werden per Photon-Geocoding nachgeodet (parallel, begrenzt, mit Timeout)
+- Datenquellen: ODS-Suche (API v2.1) und CKAN-Tabellen
 - **Datenfrische-Indikator**: Zeigt das letzte Aktualisierungsdatum des Datensatzes an
 - **Weiterführende Links**: Konfigurierbare Verweise zu verwandten Quellen (z. B. Bundesnetzagentur-Ladesäulenregister)
 
