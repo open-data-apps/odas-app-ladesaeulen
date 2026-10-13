@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.29.8 - 2026-10-13
+- FIX: Standard-Fehleranzeige gibt präzisere Tipps: ein „Failed to fetch“ ohne Proxy-Kontext erhält einen Netzwerk-Hinweis statt `proxyAktiv`; der 404-Hinweis gilt nur noch für echte HTTP-404-Antworten und nennt den lokal fehlenden Proxy/Relay statt pauschal „Datensatz auf dem Portal nicht gefunden“.
+
 ## 1.29.7 - 2026-10-13
 - PERF: R2-005: Stationstabelle zeigt zunächst 200 Zeilen, weitere per „Weitere anzeigen“; Kennzahlen, Karte, Steckerfilter und Export beziehen sich weiter auf alle Stationen. Ein delegierter Zeilen-Listener. Filter-Reset bei 1.000 Stationen ca. 95 → 48 ms, bei 5.000 ca. 400 → 130 ms.
 
