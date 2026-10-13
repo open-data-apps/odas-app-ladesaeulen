@@ -343,6 +343,9 @@ function renderOdasFehler(container, error, kontext = {}) {
   container.innerHTML = `<div class="alert ${alertClass}" role="alert"><strong>${escapeHtml(titel)}</strong><p class="mb-1">${escapeHtml(info.hinweis)}</p>${urlZeile}<details class="small"><summary>Details</summary><code>${escapeHtml(info.detail || String(error))}</code></details></div>`;
 }
 
+// R2-005: Zeilen je Tabellenschritt (DOM-Umfang bei großen Beständen begrenzen).
+const LS_ZEILEN_SCHRITT = 200;
+
 function app(configdata = {}, enclosingHtmlDivElement) {
   const lsUid = "i" + ++lsInstanzZaehler;
   const BASE_URL = getOdasApiUrl(configdata, "ladesaeulen");
@@ -995,51 +998,48 @@ function initMap(root, BASE_URL, configdata, lsUid, state) {
       });
     }
 
-    function renderTbody() {
-      const sorted = getSorted();
-      tbody.innerHTML = sorted
-        .map(({ s, i }) => {
-          const schnell = istSchnell(s);
-          const adresse = [s.strasse, s.hausnummer].filter(Boolean).join(" ");
-          const ort = [s.postleitzahl, s.ort].filter(Boolean).join(" ");
-          const c = getCoord(s);
-          const hasCoord = !!c;
-          return `<tr style="cursor:${hasCoord ? "pointer" : "default"}"
-                    data-lat="${c?.lat || ""}"
-                    data-lon="${c?.lon || ""}"
-                    data-idx="${i}">
-                  <td class="fw-semibold" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"
-                      title="${escapeHtml(s.betreiber ?? "")}">${escapeHtml(s.betreiber) || "–"}</td>
-                  <td>
-                    <div style="font-size:.85rem">${escapeHtml(adresse)}</div>
-                    <div class="text-muted" style="font-size:.75rem">${escapeHtml(ort)}</div>
-                  </td>
-                  <td style="white-space:nowrap">${
-                    schnell
-                      ? '<span class="badge bg-danger">Schnell ⚡⚡</span>'
-                      : '<span class="badge bg-success">Normal ⚡</span>'
-                  }</td>
-                  <td class="text-center">${escapeHtml(s.anzahl_ladepunkte ?? "–")}</td>
-                  <td style="white-space:nowrap">${s.nennleistung_ladeeinrichtung_kw ? escapeHtml(s.nennleistung_ladeeinrichtung_kw) + " kW" : "–"}</td>
-                  <td style="font-size:.78rem">${escapeHtml(getSteckerText(s)) || "–"}</td>
-                </tr>`;
-        })
-        .join("");
+    // R2-005: zunächst LS_ZEILEN_SCHRITT Zeilen, weitere per „Weitere anzeigen“;
+    // Kennzahlen, Karte, Steckerfilter und Export beziehen sich weiter auf alle Stationen.
+    let sortedAktuell = [];
+    let angezeigt = 0;
+    function zeileHtml({ s, i }) {
+      const schnell = istSchnell(s);
+      const adresse = [s.strasse, s.hausnummer].filter(Boolean).join(" ");
+      const ort = [s.postleitzahl, s.ort].filter(Boolean).join(" ");
+      const c = getCoord(s);
+      const hasCoord = !!c;
+      return `<tr style="cursor:${hasCoord ? "pointer" : "default"}"
+                data-lat="${c?.lat || ""}"
+                data-lon="${c?.lon || ""}"
+                data-idx="${i}">
+              <td class="fw-semibold" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"
+                  title="${escapeHtml(s.betreiber ?? "")}">${escapeHtml(s.betreiber) || "–"}</td>
+              <td>
+                <div style="font-size:.85rem">${escapeHtml(adresse)}</div>
+                <div class="text-muted" style="font-size:.75rem">${escapeHtml(ort)}</div>
+              </td>
+              <td style="white-space:nowrap">${
+                schnell
+                  ? '<span class="badge bg-danger">Schnell ⚡⚡</span>'
+                  : '<span class="badge bg-success">Normal ⚡</span>'
+              }</td>
+              <td class="text-center">${escapeHtml(s.anzahl_ladepunkte ?? "–")}</td>
+              <td style="white-space:nowrap">${s.nennleistung_ladeeinrichtung_kw ? escapeHtml(s.nennleistung_ladeeinrichtung_kw) + " kW" : "–"}</td>
+              <td style="font-size:.78rem">${escapeHtml(getSteckerText(s)) || "–"}</td>
+            </tr>`;
+    }
 
-      // Klick auf Zeile → Karte zentrieren & Popup öffnen
-      tbody.querySelectorAll("tr").forEach((row) => {
-        row.addEventListener("click", () => {
-          const lat = parseFloat(row.dataset.lat);
-          const lon = parseFloat(row.dataset.lon);
-          const idx = parseInt(row.dataset.idx);
-          if (!lat || !lon) return;
-          map.setView([lat, lon], 17);
-          markers[idx]?.marker.openPopup();
-          root
-            .querySelector("#ls-ladestation-map-" + lsUid)
-            .scrollIntoView({ behavior: "smooth", block: "center" });
-        });
-      });
+    function mehrButtonHtml() {
+      if (angezeigt >= sortedAktuell.length) return "";
+      const weitere = Math.min(LS_ZEILEN_SCHRITT, sortedAktuell.length - angezeigt);
+      return `<button type="button" class="btn btn-outline-secondary btn-sm mt-2 lade-mehr">Weitere ${weitere.toLocaleString("de-DE")} anzeigen (${angezeigt.toLocaleString("de-DE")} von ${sortedAktuell.length.toLocaleString("de-DE")} angezeigt)</button>`;
+    }
+
+    function renderTbody() {
+      sortedAktuell = getSorted();
+      angezeigt = Math.min(sortedAktuell.length, LS_ZEILEN_SCHRITT);
+      tbody.innerHTML = sortedAktuell.slice(0, angezeigt).map(zeileHtml).join("");
+      mehrWrap.innerHTML = mehrButtonHtml();
     }
 
     listEl.innerHTML = `
@@ -1102,9 +1102,35 @@ function initMap(root, BASE_URL, configdata, lsUid, state) {
           <tbody id="ladestation-tbody-${lsUid}"></tbody>
         </table>
       </div>
+      <div class="lade-mehr-wrap"></div>
 `;
 
     const tbody = listEl.querySelector("#ladestation-tbody-" + lsUid);
+    const mehrWrap = listEl.querySelector(".lade-mehr-wrap");
+
+    // Klick auf Zeile → Karte zentrieren & Popup öffnen (delegiert, gilt auch für nachgeladene Zeilen)
+    tbody.addEventListener("click", (event) => {
+      const row = event.target.closest("tr");
+      if (!row) return;
+      const lat = parseFloat(row.dataset.lat);
+      const lon = parseFloat(row.dataset.lon);
+      const idx = parseInt(row.dataset.idx);
+      if (!lat || !lon) return;
+      map.setView([lat, lon], 17);
+      markers[idx]?.marker.openPopup();
+      root
+        .querySelector("#ls-ladestation-map-" + lsUid)
+        .scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+
+    mehrWrap.addEventListener("click", (event) => {
+      if (!event.target.closest(".lade-mehr")) return;
+      const naechste = sortedAktuell.slice(angezeigt, angezeigt + LS_ZEILEN_SCHRITT);
+      tbody.insertAdjacentHTML("beforeend", naechste.map(zeileHtml).join(""));
+      angezeigt += naechste.length;
+      mehrWrap.innerHTML = mehrButtonHtml();
+    });
+
     renderTbody();
 
     // Sortier-Klick auf Header

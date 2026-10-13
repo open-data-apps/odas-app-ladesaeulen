@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.29.7 - 2026-10-13
+- PERF: R2-005: Stationstabelle zeigt zunächst 200 Zeilen, weitere per „Weitere anzeigen“; Kennzahlen, Karte, Steckerfilter und Export beziehen sich weiter auf alle Stationen. Ein delegierter Zeilen-Listener. Filter-Reset bei 1.000 Stationen ca. 95 → 48 ms, bei 5.000 ca. 400 → 130 ms.
+
 ## 1.29.6 - 2026-10-13
 - ENH: Datenvertrag `assets/datenvertraege.json` für die Store-Datenprüfung (`daten.pruefung`): die ODS-v2.1-Quelle `ladesaeulen` wird seitenweise wie in der App (`limit=100`/`offset`, ohne App-Obergrenze) mit Frictionless gegen das Rohdatenschema `assets/schemas/stationen.json` geprüft; `ort` und `postleitzahl` müssen vorhanden sein (serverseitiger Suchfilter), alle übrigen Felder sind wie in der App optional, Koordinaten über `/koordinaten/lat|lon`. Testfälle unter `tests/datenvertrag/`.
 
