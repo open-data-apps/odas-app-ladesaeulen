@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.29.5 - 2026-10-02
+- ENH: Verwendete ODAS-Dienste in `odas-services` deklariert.
+
+## 1.29.4 - 2026-09-29
+
+- **FIX:** Audit F-118: `initMap` nutzte die Variable `lsUid` statt des gleichnamigen Parameters — die App brach beim Start mit „lsUid is not defined" ab. Parameternamen und alle vier Verwendungen (u. a. KPI-Kontexte, Ort-Suggest) konsolidiert; Start, Suche, Karte und Trefferliste wieder funktionsfähig (Browser nachgewiesen).
+
 ## 1.29.3 - 2026-09-10
 - **FIX:** Same-Page-Re-Render räumt Vorgänger-Instanz ab (LS-B1, extrahierter `teardownLadesaeulenInstanz` für Hook + Re-Render).
 - **FIX:** Typ-Gate lässt CKAN-Tabellen zu (LS-B2, `erwarteteTypen`); vorhandener CKAN-Pfad war sonst unerreichbar.

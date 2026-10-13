@@ -516,7 +516,7 @@ function loadLeaflet() {
 }
 
 /* ── Karte und Logik initialisieren ── */
-function initMap(root, BASE_URL, configdata, uid, state) {
+function initMap(root, BASE_URL, configdata, lsUid, state) {
   if (state.disposed) return;
   const map = L.map(root.querySelector("#ls-ladestation-map-" + lsUid)).setView([51.165, 10.451], 6);
   state.map = map;
@@ -1048,7 +1048,7 @@ function initMap(root, BASE_URL, configdata, uid, state) {
           <div class="card text-center border-0 bg-success bg-opacity-10">
             <div class="card-body py-2">
               <div class="fs-4 fw-bold text-success">${stationen.length}</div>
-              <div class="small text-muted">Ladesäulen</div>\n              ${kpiContext(configdata.kpiKontext1, "1", uid)}
+              <div class="small text-muted">Ladesäulen</div>\n              ${kpiContext(configdata.kpiKontext1, "1", lsUid)}
             </div>
           </div>
         </div>
@@ -1056,7 +1056,7 @@ function initMap(root, BASE_URL, configdata, uid, state) {
           <div class="card text-center border-0 bg-primary bg-opacity-10">
             <div class="card-body py-2">
               <div class="fs-4 fw-bold text-primary">${gesamtPunkte}</div>
-              <div class="small text-muted">Ladepunkte gesamt</div>\n              ${kpiContext(configdata.kpiKontext2, "2", uid)}
+              <div class="small text-muted">Ladepunkte gesamt</div>\n              ${kpiContext(configdata.kpiKontext2, "2", lsUid)}
             </div>
           </div>
         </div>
@@ -1064,7 +1064,7 @@ function initMap(root, BASE_URL, configdata, uid, state) {
           <div class="card text-center border-0 bg-warning bg-opacity-10">
             <div class="card-body py-2">
               <div class="fs-4 fw-bold text-warning">${maxKw > 0 ? maxKw + " kW" : "–"}</div>
-              <div class="small text-muted">Max. Leistung</div>\n              ${kpiContext(configdata.kpiKontext3, "3", uid)}
+              <div class="small text-muted">Max. Leistung</div>\n              ${kpiContext(configdata.kpiKontext3, "3", lsUid)}
             </div>
           </div>
         </div>
@@ -1508,7 +1508,7 @@ function initMap(root, BASE_URL, configdata, uid, state) {
   // viewport-basiert (position:fixed + getBoundingClientRect), kein Ancestor
   // bildet einen neuen Containing-Block (kein transform/filter/will-change).
   const suggestionsEl = document.createElement("ul");
-  suggestionsEl.id = "ort-suggestions-" + uid;
+  suggestionsEl.id = "ort-suggestions-" + lsUid;
   suggestionsEl.className = "list-group shadow";
   suggestionsEl.style.cssText = [
     "display:none",
