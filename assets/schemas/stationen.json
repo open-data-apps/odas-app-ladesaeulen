@@ -1,0 +1,224 @@
+{
+  "$schema": "https://frictionlessdata.io/schemas/table-schema.json",
+  "name": "ladesaeulen-stationen",
+  "title": "Ladesäulen – Rohdatensätze der Open-Data-Suche (ODS API v2.1)",
+  "fields": [
+    {
+      "name": "betreiber",
+      "title": "Betreiber",
+      "type": "string",
+      "description": "Betreiber der Ladeeinrichtung (Text). Die App zeigt ersatzweise „Unbekannter Betreiber“ und sortiert per Textvergleich.",
+      "constraints": {
+        "required": false
+      }
+    },
+    {
+      "name": "art_der_ladeeinrichtung",
+      "title": "Art der Ladeeinrichtung",
+      "type": "string",
+      "description": "Bauart, z. B. Normal- oder Schnellladeeinrichtung (Text). Die App erkennt Schnelllader an diesem Feldnamen; die Standardquelle liefert ihn in der Schreibweise „art_der_ladeeinrichung“, deshalb fehlt er dort.",
+      "constraints": {
+        "required": false
+      }
+    },
+    {
+      "name": "anzahl_ladepunkte",
+      "title": "Anzahl Ladepunkte",
+      "type": "number",
+      "description": "Zahl der Ladepunkte als JSON-Zahl (Quelle: double, z. B. 2.0). Die App summiert sie für die KPI „Ladepunkte gesamt“.",
+      "constraints": {
+        "required": false
+      }
+    },
+    {
+      "name": "steckertypen1",
+      "title": "Steckertypen 1",
+      "type": "string",
+      "description": "Steckertypen des 1. Ladepunkts als Text, z. B. „AC Typ 2 Steckdose“; mehrere Typen durch Semikolon getrennt.",
+      "constraints": {
+        "required": false
+      }
+    },
+    {
+      "name": "steckertypen2",
+      "title": "Steckertypen 2",
+      "type": "string",
+      "description": "Steckertypen des 2. Ladepunkts als Text, z. B. „AC Typ 2 Steckdose“; mehrere Typen durch Semikolon getrennt.",
+      "constraints": {
+        "required": false
+      }
+    },
+    {
+      "name": "steckertypen3",
+      "title": "Steckertypen 3",
+      "type": "string",
+      "description": "Steckertypen des 3. Ladepunkts als Text, z. B. „AC Typ 2 Steckdose“; mehrere Typen durch Semikolon getrennt.",
+      "constraints": {
+        "required": false
+      }
+    },
+    {
+      "name": "steckertypen4",
+      "title": "Steckertypen 4",
+      "type": "string",
+      "description": "Steckertypen des 4. Ladepunkts als Text, z. B. „AC Typ 2 Steckdose“; mehrere Typen durch Semikolon getrennt.",
+      "constraints": {
+        "required": false
+      }
+    },
+    {
+      "name": "steckertypen5",
+      "title": "Steckertypen 5",
+      "type": "string",
+      "description": "Steckertypen des 5. Ladepunkts als Text, z. B. „AC Typ 2 Steckdose“; mehrere Typen durch Semikolon getrennt.",
+      "constraints": {
+        "required": false
+      }
+    },
+    {
+      "name": "steckertypen6",
+      "title": "Steckertypen 6",
+      "type": "string",
+      "description": "Steckertypen des 6. Ladepunkts als Text, z. B. „AC Typ 2 Steckdose“; mehrere Typen durch Semikolon getrennt.",
+      "constraints": {
+        "required": false
+      }
+    },
+    {
+      "name": "p1_kw",
+      "title": "Leistung P1 (kW)",
+      "type": "number",
+      "description": "Einzelleistung des 1. Ladepunkts in Kilowatt als JSON-Zahl (Quelle: double).",
+      "constraints": {
+        "required": false
+      }
+    },
+    {
+      "name": "p2_kw",
+      "title": "Leistung P2 (kW)",
+      "type": "number",
+      "description": "Einzelleistung des 2. Ladepunkts in Kilowatt als JSON-Zahl (Quelle: double).",
+      "constraints": {
+        "required": false
+      }
+    },
+    {
+      "name": "p3_kw",
+      "title": "Leistung P3 (kW)",
+      "type": "number",
+      "description": "Einzelleistung des 3. Ladepunkts in Kilowatt als JSON-Zahl (Quelle: double).",
+      "constraints": {
+        "required": false
+      }
+    },
+    {
+      "name": "p4_kw",
+      "title": "Leistung P4 (kW)",
+      "type": "number",
+      "description": "Einzelleistung des 4. Ladepunkts in Kilowatt als JSON-Zahl (Quelle: double).",
+      "constraints": {
+        "required": false
+      }
+    },
+    {
+      "name": "p5_kw",
+      "title": "Leistung P5 (kW)",
+      "type": "string",
+      "description": "Einzelleistung des 5. Ladepunkts in Kilowatt. Die Quelle liefert dieses Feld als Text (z. B. „22“), nicht als Zahl; die App wandelt es beim Vergleich um.",
+      "constraints": {
+        "required": false
+      }
+    },
+    {
+      "name": "p6_kw",
+      "title": "Leistung P6 (kW)",
+      "type": "string",
+      "description": "Einzelleistung des 6. Ladepunkts in Kilowatt. Die Quelle liefert dieses Feld als Text (z. B. „22“), nicht als Zahl; die App wandelt es beim Vergleich um.",
+      "constraints": {
+        "required": false
+      }
+    },
+    {
+      "name": "nennleistung_ladeeinrichtung_kw",
+      "title": "Nennleistung (kW)",
+      "type": "number",
+      "description": "Gesamtnennleistung der Ladeeinrichtung in Kilowatt als JSON-Zahl (Quelle: double); Grundlage der KPI „Max. Leistung“.",
+      "constraints": {
+        "required": false
+      }
+    },
+    {
+      "name": "ort",
+      "title": "Ort",
+      "type": "string",
+      "description": "Ort des Ladestandorts (Text). Die App filtert serverseitig über dieses Feld (where ort LIKE …); das Feld muss daher vorhanden sein, der Wert darf leer sein.",
+      "constraints": {
+        "required": false
+      }
+    },
+    {
+      "name": "postleitzahl",
+      "title": "Postleitzahl",
+      "type": "string",
+      "description": "Postleitzahl als Text, führende Nullen bleiben erhalten. Die App filtert serverseitig über dieses Feld (where postleitzahl LIKE …); das Feld muss daher vorhanden sein, der Wert darf leer sein.",
+      "constraints": {
+        "required": false
+      }
+    },
+    {
+      "name": "strasse",
+      "title": "Straße",
+      "type": "string",
+      "description": "Straße des Ladestandorts (Text).",
+      "constraints": {
+        "required": false
+      }
+    },
+    {
+      "name": "hausnummer",
+      "title": "Hausnummer",
+      "type": "string",
+      "description": "Hausnummer als Text (kann Zusätze wie „12a“ enthalten).",
+      "constraints": {
+        "required": false
+      }
+    },
+    {
+      "name": "inbetriebnahmedatum",
+      "title": "Inbetriebnahmedatum",
+      "type": "date",
+      "format": "default",
+      "description": "Datum der Inbetriebnahme im ISO-Format JJJJ-MM-TT (ODS-Feldtyp date, ohne Uhrzeit/Zeitzone).",
+      "constraints": {
+        "required": false
+      }
+    },
+    {
+      "name": "anzeigename_karte",
+      "title": "Anzeigename (Karte)",
+      "type": "string",
+      "description": "Optionaler Anzeigename des Standorts (Text).",
+      "constraints": {
+        "required": false
+      }
+    },
+    {
+      "name": "koordinaten_lat",
+      "title": "Breitengrad",
+      "type": "number",
+      "description": "Breitengrad (WGS84) aus dem ODS-geo_point_2d-Objekt „koordinaten“ (JSON Pointer /koordinaten/lat).",
+      "constraints": {
+        "required": false
+      }
+    },
+    {
+      "name": "koordinaten_lon",
+      "title": "Längengrad",
+      "type": "number",
+      "description": "Längengrad (WGS84) aus dem ODS-geo_point_2d-Objekt „koordinaten“ (JSON Pointer /koordinaten/lon).",
+      "constraints": {
+        "required": false
+      }
+    }
+  ]
+}

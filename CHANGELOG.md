@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.29.6 - 2026-10-13
+- ENH: Datenvertrag `assets/datenvertraege.json` für die Store-Datenprüfung (`daten.pruefung`): die ODS-v2.1-Quelle `ladesaeulen` wird seitenweise wie in der App (`limit=100`/`offset`, ohne App-Obergrenze) mit Frictionless gegen das Rohdatenschema `assets/schemas/stationen.json` geprüft; `ort` und `postleitzahl` müssen vorhanden sein (serverseitiger Suchfilter), alle übrigen Felder sind wie in der App optional, Koordinaten über `/koordinaten/lat|lon`. Testfälle unter `tests/datenvertrag/`.
+
 ## 1.29.5 - 2026-10-02
 - ENH: Verwendete ODAS-Dienste in `odas-services` deklariert.
 
