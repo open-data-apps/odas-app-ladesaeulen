@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.29.10 - 2026-10-14
+- CHG: Datenvertrag `assets/datenvertraege.json` auf die flache Form der Store-Datenprüfung umgestellt: ein Eintrag je Slot (`leser: "json-v1"`, `zeilen`, `schema`, `optional`, `pfade`, `seiten`); Pflicht oder optional folgt allein `erforderlich` des Slots. Prüfinhalt und Testfälle unverändert.
+
 ## 1.29.9 - 2026-10-13
 - FIX: Schnelllader werden wieder erkannt: das Ladesäulenregister schreibt das Feld `art_der_ladeeinrichung` (sic); die App liest jetzt beide Schreibweisen (vorher immer „Normal“).
 - FIX: CKAN-Quellen über `datastore_search_sql` laden alle Seiten statt nur der ersten 100 Zeilen (die SQL-Antwort enthält kein `result.total`; es wird bis zur ersten kurzen Seite weitergeblättert).

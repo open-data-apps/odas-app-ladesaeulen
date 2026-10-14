@@ -1,72 +1,43 @@
 {
   "version": "1",
-  "table-schema-version": "1.0",
   "quellen": {
     "ladesaeulen": {
-      "bedarf": "pflicht",
-      "zugriff": {
-        "typ": "direkt"
+      "leser": "json-v1",
+      "zeilen": "/results",
+      "schema": "assets/schemas/stationen.json",
+      "optional": [
+        "betreiber",
+        "art_der_ladeeinrichung",
+        "anzahl_ladepunkte",
+        "steckertypen1",
+        "steckertypen2",
+        "steckertypen3",
+        "steckertypen4",
+        "steckertypen5",
+        "steckertypen6",
+        "p1_kw",
+        "p2_kw",
+        "p3_kw",
+        "p4_kw",
+        "p5_kw",
+        "p6_kw",
+        "nennleistung_ladeeinrichtung_kw",
+        "strasse",
+        "hausnummer",
+        "inbetriebnahmedatum",
+        "anzeigename_karte",
+        "koordinaten_lat",
+        "koordinaten_lon"
+      ],
+      "pfade": {
+        "koordinaten_lat": "/koordinaten/lat",
+        "koordinaten_lon": "/koordinaten/lon"
       },
-      "abfrage": {
-        "seiten": {
-          "profil": "ods-offset-v1",
-          "groesse": 100,
-          "maximum": null
-        }
-      },
-      "pruefungen": [
-        {
-          "name": "stationen",
-          "ressource": {
-            "typ": "antwort"
-          },
-          "varianten": [
-            {
-              "name": "ods-v21-json",
-              "erkennung": {
-                "format": "json",
-                "array": "/results"
-              },
-              "leser": {
-                "profil": "json-v1"
-              },
-              "verfahren": "frictionless",
-              "zeilen": "/results",
-              "schema": "assets/schemas/stationen.json",
-              "felder": {
-                "optional": [
-                  "betreiber",
-                  "art_der_ladeeinrichung",
-                  "anzahl_ladepunkte",
-                  "steckertypen1",
-                  "steckertypen2",
-                  "steckertypen3",
-                  "steckertypen4",
-                  "steckertypen5",
-                  "steckertypen6",
-                  "p1_kw",
-                  "p2_kw",
-                  "p3_kw",
-                  "p4_kw",
-                  "p5_kw",
-                  "p6_kw",
-                  "nennleistung_ladeeinrichtung_kw",
-                  "strasse",
-                  "hausnummer",
-                  "inbetriebnahmedatum",
-                  "anzeigename_karte",
-                  "koordinaten_lat",
-                  "koordinaten_lon"
-                ],
-                "pfade": {
-                  "koordinaten_lat": "/koordinaten/lat",
-                  "koordinaten_lon": "/koordinaten/lon"
-                }
-              }
-            }
-          ]
-        }
-      ]
+      "seiten": {
+        "profil": "ods-offset-v1",
+        "groesse": 100,
+        "maximum": null
+      }
     }
   }
 }
