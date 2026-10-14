@@ -13,10 +13,10 @@
       }
     },
     {
-      "name": "art_der_ladeeinrichtung",
+      "name": "art_der_ladeeinrichung",
       "title": "Art der Ladeeinrichtung",
       "type": "string",
-      "description": "Bauart, z. B. Normal- oder Schnellladeeinrichtung (Text). Die App erkennt Schnelllader an diesem Feldnamen; die Standardquelle liefert ihn in der Schreibweise „art_der_ladeeinrichung“, deshalb fehlt er dort.",
+      "description": "Bauart, z. B. Normal- oder Schnellladeeinrichtung (Text). Feldname in der Schreibweise des Ladesäulenregisters („art_der_ladeeinrichung“, sic); die App erkennt daran Schnelllader und akzeptiert auch „art_der_ladeeinrichtung“.",
       "constraints": {
         "required": false
       }

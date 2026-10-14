@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.29.9 - 2026-10-13
+- FIX: Schnelllader werden wieder erkannt: das Ladesäulenregister schreibt das Feld `art_der_ladeeinrichung` (sic); die App liest jetzt beide Schreibweisen (vorher immer „Normal“).
+- FIX: CKAN-Quellen über `datastore_search_sql` laden alle Seiten statt nur der ersten 100 Zeilen (die SQL-Antwort enthält kein `result.total`; es wird bis zur ersten kurzen Seite weitergeblättert).
+- ENH: Datenvertrag beschreibt das Feld in der Schreibweise der Quelle.
+
 ## 1.29.8 - 2026-10-13
 - FIX: Standard-Fehleranzeige gibt präzisere Tipps: ein „Failed to fetch“ ohne Proxy-Kontext erhält einen Netzwerk-Hinweis statt `proxyAktiv`; der 404-Hinweis gilt nur noch für echte HTTP-404-Antworten und nennt den lokal fehlenden Proxy/Relay statt pauschal „Datensatz auf dem Portal nicht gefunden“.
 

@@ -689,7 +689,8 @@ function initMap(root, BASE_URL, configdata, lsUid, state) {
   }
 
   function istSchnell(s) {
-    return (s.art_der_ladeeinrichtung || "").toLowerCase().includes("schnell");
+    // Das Ladesäulenregister schreibt das Feld „art_der_ladeeinrichung“ (sic); beide Schreibweisen zulassen.
+    return (s.art_der_ladeeinrichtung || s.art_der_ladeeinrichung || "").toLowerCase().includes("schnell");
   }
 
   /* ── Koordinaten normalisieren und auf Deutschland-Bounding-Box prüfen ── */
@@ -1324,15 +1325,16 @@ function initMap(root, BASE_URL, configdata, lsUid, state) {
         }
 
         const page = data?.result?.records || [];
-        if (total === null) total = data?.result?.total ?? 0;
+        // datastore_search_sql liefert kein result.total: dann bis zur ersten kurzen Seite weiterblättern.
+        if (total === null && Number.isFinite(data?.result?.total)) total = data.result.total;
         allResults = allResults.concat(page);
 
-        if (total > PAGE_SIZE) {
+        if (total !== null && total > PAGE_SIZE) {
           const p = listEl.querySelector("p");
           if (p) p.textContent = `Lade Daten… ${allResults.length} / ${total}`;
         }
 
-        if (page.length < PAGE_SIZE || allResults.length >= total) break;
+        if (page.length < PAGE_SIZE || (total !== null && allResults.length >= total)) break;
         offset += PAGE_SIZE;
       }
       return allResults;

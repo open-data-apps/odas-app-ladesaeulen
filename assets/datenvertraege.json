@@ -36,7 +36,7 @@
               "felder": {
                 "optional": [
                   "betreiber",
-                  "art_der_ladeeinrichtung",
+                  "art_der_ladeeinrichung",
                   "anzahl_ladepunkte",
                   "steckertypen1",
                   "steckertypen2",
