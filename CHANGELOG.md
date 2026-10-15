@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.29.13 - 2026-10-15
+- FIX: Kopfzeile bei 360 px ohne Überlauf (Template): Logo- und Burger-Spalte passen sich der Breite an, das Menü-Symbol ragt nicht mehr über den rechten Rand. Keine Änderung an App-Code oder Konfiguration.
+
 ## 1.29.12 - 2026-10-15
 - FIX: Karten-Popups öffnen jetzt unterhalb der Kartensteuerung (Zoom-Knöpfe, Vollbild) statt darunter verdeckt; ein Klick auf eine Tabellenzeile öffnet das Popup auch für Ladesäulen, die auf der Karte noch in einem Cluster stecken.
 
