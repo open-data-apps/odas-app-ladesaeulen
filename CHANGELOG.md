@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.29.11 - 2026-10-15
+- DOCS: Neue Store-Screenshots: je drei Desktop- (1440 × 1000) und Mobile-Aufnahmen (390 × 844) der aktuellen App, aufgenommen auf der Dev-Instanz. Bisherige Bilder nach `docs/screenshots/archive/2026-10-13/` verschoben. Keine Änderung an App-Code oder Konfiguration.
+
 ## 1.29.10 - 2026-10-14
 - CHG: Datenvertrag `assets/datenvertraege.json` auf die flache Form der Store-Datenprüfung umgestellt: ein Eintrag je Slot (`leser: "json-v1"`, `zeilen`, `schema`, `optional`, `pfade`, `seiten`); Pflicht oder optional folgt allein `erforderlich` des Slots. Prüfinhalt und Testfälle unverändert.
 
