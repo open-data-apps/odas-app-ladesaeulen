@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.29.12 - 2026-10-15
+- FIX: Karten-Popups öffnen jetzt unterhalb der Kartensteuerung (Zoom-Knöpfe, Vollbild) statt darunter verdeckt; ein Klick auf eine Tabellenzeile öffnet das Popup auch für Ladesäulen, die auf der Karte noch in einem Cluster stecken.
+
 ## 1.29.11 - 2026-10-15
 - DOCS: Neue Store-Screenshots: je drei Desktop- (1440 × 1000) und Mobile-Aufnahmen (390 × 844) der aktuellen App, aufgenommen auf der Dev-Instanz. Bisherige Bilder nach `docs/screenshots/archive/2026-10-13/` verschoben. Keine Änderung an App-Code oder Konfiguration.
 

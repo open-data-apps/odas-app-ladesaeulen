@@ -921,7 +921,7 @@ function initMap(root, BASE_URL, configdata, lsUid, state) {
           </a>
         </div>
       `,
-        { maxWidth: 300 },
+        { maxWidth: 300, autoPanPaddingTopLeft: [10, 90], autoPanPaddingBottomRight: [10, 10] },
       );
 
       markerGroup.addLayer(marker);
@@ -1127,8 +1127,18 @@ function initMap(root, BASE_URL, configdata, lsUid, state) {
       const lon = parseFloat(row.dataset.lon);
       const idx = parseInt(row.dataset.idx);
       if (!lat || !lon) return;
-      map.setView([lat, lon], 17);
-      markers[idx]?.marker.openPopup();
+      const zielMarker = markers[idx]?.marker;
+      const zeigen = () => {
+        map.setView([lat, lon], Math.max(map.getZoom(), 17), { animate: false });
+        zielMarker.openPopup();
+      };
+      // Marker kann in einem Cluster stecken: erst aufdecken, dann zentrieren und Popup öffnen.
+      if (zielMarker && markerGroup.zoomToShowLayer) {
+        markerGroup.zoomToShowLayer(zielMarker, zeigen);
+      } else {
+        map.setView([lat, lon], 17);
+        zielMarker?.openPopup();
+      }
       root
         .querySelector("#ls-ladestation-map-" + lsUid)
         .scrollIntoView({ behavior: "smooth", block: "center" });
