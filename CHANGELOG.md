@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.29.14 - 2026-10-16
+- FIX: Datenvertrag für die Store-Datenprüfung des aufgegebenen Frictionless-Branches entfernt (`daten.pruefung`, `assets/datenvertraege.json`, `assets/schemas/`, Testfälle). Der Store prüft auf `dev` gegen `assets/schema.json`; die App selbst ist unverändert.
+
 ## 1.29.13 - 2026-10-15
 - FIX: Kopfzeile bei 360 px ohne Überlauf (Template): Logo- und Burger-Spalte passen sich der Breite an, das Menü-Symbol ragt nicht mehr über den rechten Rand. Keine Änderung an App-Code oder Konfiguration.
 
