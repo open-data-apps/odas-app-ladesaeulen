@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.29.15 - 2026-11-03
+- DOCS: MIT-Lizenz ergänzt: `LICENSE` liegt im Repository und im Lieferpaket (`make zip`), das README hat einen Abschnitt „Lizenz“. Keine Änderung an App-Code oder Konfiguration.
+
 ## 1.29.14 - 2026-10-16
 - FIX: Datenvertrag für die Store-Datenprüfung des aufgegebenen Frictionless-Branches entfernt (`daten.pruefung`, `assets/datenvertraege.json`, `assets/schemas/`, Testfälle). Der Store prüft auf `dev` gegen `assets/schema.json`; die App selbst ist unverändert.
 
